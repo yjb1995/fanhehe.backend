@@ -6,9 +6,8 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "experimentalDecorators": true,
-        
         "outDir": "./dist",
-        
+
         "typeRoots": [
             "./node_modules/@types/"
         ]

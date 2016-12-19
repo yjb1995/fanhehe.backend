@@ -49,7 +49,7 @@ app.use(async (ctx, next) => {
 		ctx.set('Access-Control-Allow-Credentials', 'true');
 		ctx.set('X-Powered-By',' 3.2.1');
 		ctx.set('Content-Type', 'application/json;charset=utf-8');
-		next();
+		await next();
 	}
 });
 // 处理options
