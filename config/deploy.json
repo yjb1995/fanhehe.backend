@@ -22,6 +22,12 @@
 				"username" : "fanhehe",
 				"password" : "13889441200",
 				"database" : "Main"
+			},
+			"session": {
+				"host": "127.0.0.1",
+				"port": "6379",
+				"username": "",
+				"password": ""
 			}
 		}
 	},
@@ -50,6 +56,12 @@
 				"username" : "fanhehe",
 				"password" : "13889441200",
 				"database" : "Main"
+			},
+			"session": {
+				"host": "127.0.0.1",
+				"port": "6379",
+				"username": "",
+				"password": ""
 			}
 		}
 	}

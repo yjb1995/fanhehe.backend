@@ -1,81 +1,41 @@
-const Koa = require('koa');
-const path = require('path');
-const json = require('koa-json');
-const logger = require('koa-logger');
-const morgan = require('koa-morgan');
-const favicon = require('koa-favicon');
-const convert = require('koa-convert');
-const session = require('koa-session');
-const router = require('koa-router')();
-const bodyParser = require('koa-bodyparser');
+import Koa = require('koa');
+import path = require('path');
+import KeyGrip = require('keygrip');
 
-const KeyGrip = require('keygrip');
+import json = require('koa-json');
+import logger = require('koa-logger');
+import morgan = require('koa-morgan');
+import convert = require('koa-convert');
+import bodyParser = require('koa-bodyparser');
 
-import user from './routes/user';
-import blog from './routes/blog';
-const config = require('../config');
+import router from './routes';
+import time from './middlewares/time';
+import cors from './middlewares/cors';
+import favicon from './middlewares/favicon';
+import session  from './middlewares/session';
 
 const app = new Koa();
 
-app.keys = new KeyGrip(['i am fan hehe'], 'sha256');
+app.keys = new KeyGrip(['i ams fan hehe'], 'sha256');
+
+// 处理时间
+app.use(time);
 // middlewares
 app.use(convert(bodyParser()));
 app.use(convert(json()));
 app.use(convert(logger()));
-app.use(convert(session(config.session, app)));
-app.use(convert(favicon(__dirname + '/public/favicon.ico')));
+app.use(session());
 app.use(convert(morgan('dev')));
-// 处理时间
-app.use(async (ctx, next) => {
-	const start:any = new Date();
-	await next();
-	const end:any = new Date();
-	const ms = end - start;
-	ctx.set('X-Response-Time', ms);
-});
-// CROS
-app.use(async (ctx, next) => {
-	let ensureCROS = false;
-	const { origin, host } = ctx.headers;
-	const url = origin || host;
-	const whiteList = config.whiteList;
-	ensureCROS = whiteList.some( item => item.indexOf(url) != -1);
-	if (!ensureCROS) {
-		console.log('no permision for cros', origin);
-	} else {
-		ctx.set('Access-Control-Allow-Origin', origin);
-		ctx.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Cookie');
-		ctx.set('Access-Control-Allow-Methods','PUT,POST,GET,DELETE,OPTIONS');
-		ctx.set('Access-Control-Allow-Credentials', 'true');
-		ctx.set('X-Powered-By',' 3.2.1');
-		ctx.set('Content-Type', 'application/json;charset=utf-8');
-		await next();
-	}
-});
-// 处理options
-app.use(async (ctx, next) => {
-	const method = ctx.method;
-	const regExp = /options/i;
-	if (regExp.test(method)) {
-		ctx.body = {method: 'options', status: 'success'};
-	} else {
-		await next();
-	}
-});
+app.use(favicon());
 
-router.prefix('/api');
-router.use('/user', user.routes(), user.allowedMethods());
-router.use('/blog', blog.routes(), blog.allowedMethods());
 
-app.use(router.routes(), router.allowedMethods());
-
-app.on('error', function (err, ctx) {
-	console.error(err, ctx);
-});
+// cors
+app.use(cors.checkOrigin);
+// routes
+app.use(router.routes()).use(router.allowedMethods());
 
 app.use( (ctx, next) => {
 	const error = new Error('Not Found');
-	console.log(error.stack);
 	ctx.body = {
 		code: 500,
 		message: error.message,
