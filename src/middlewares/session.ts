@@ -29,7 +29,7 @@ class RedisStore extends Store{
     }
 };
 
-export default function () {
+export default function (app) {
     const key = 'i am fan hehe';
     const options = config.storage.session;
 

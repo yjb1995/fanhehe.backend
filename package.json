@@ -21,6 +21,7 @@
   "license": "ISC",
   "dependencies": {
     "es6-promise": "^4.0.5",
+    "events": "^1.1.1",
     "fs": "^0.0.1-security",
     "ioredis": "^2.4.3",
     "keygrip": "^1.0.1",

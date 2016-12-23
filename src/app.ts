@@ -24,7 +24,7 @@ app.use(time);
 app.use(convert(bodyParser()));
 app.use(convert(json()));
 app.use(convert(logger()));
-app.use(session());
+app.use(session(app));
 app.use(convert(morgan('dev')));
 app.use(favicon());
 

@@ -1,5 +1,7 @@
+import { dispatch } from '../services/user';
+import { user } from '../constants/service';
+
 const router = require('koa-router')();
-import { Main } from '../db/mysql';
 
 router.get('/', function (ctx, next) {
 	const userId = ctx.session.user? ctx.session.user.id : '';
@@ -14,34 +16,17 @@ router.get('/', function (ctx, next) {
 	}
 });
 
-router.post('/register', async (ctx, next) => {
-	const data: any = ctx.request.body;
-	const result = await registerWithEmail(data);
-	ctx.body = result;
-});
-
-router.post('/test', async (ctx, next) => {
-	const result = await Main.TUser.find({where: {id: 1}}).then(data => data.dataValues);
-	ctx.body = result;
+router.post('/registerWithEmail', async (ctx, next) => {
+	let result = {};
+	const { email, password, nickname } = ctx.request.body;
+	
+	result = await dispatch(user.REGISTER_WITH_EMAIL, {
+		email,
+		nickname,
+		password,
+	});
+	
+	return ctx.body = result;
 });
 
 export default router;
-
-const registerWithEmail = async data => {
-	const { email, nickname } = data;
-
-	const result = await new Promise(resolve => {
-		Main.TUser.findOrCreate({
-			where: {
-				email,
-				nickname,
-			},
-			default: {
-				...data,
-			}
-		}).then( data => {
-			resolve(data);
-		});
-	});
-	return result;
-}
