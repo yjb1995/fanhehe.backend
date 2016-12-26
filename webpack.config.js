@@ -3,7 +3,7 @@ var webpack = require('webpack');
 
 
 var webpackConfig = {
-    entry: './bin/www.ts',
+    entry: './bin/www.js',
     output: {
         path: path.join(__dirname, './dist'),
         publicPath: '/',
@@ -26,6 +26,9 @@ var webpackConfig = {
             test: /\.ts$/,
             loader: 'ts',
             exclude: /node_modules/
+        }, {
+            test: /\.js$/,
+            loader: 'babel'
         }],
     },
 };

@@ -1,11 +1,14 @@
 import * as types from '../constants/response';
 
-export default function response(status: string | number, data = {}, options?: Options): ResponseBody {
+export default function response(status: string | number, data = null, options?: Options): ResponseBody {
+	options = options || {};
+
 	const body: any = {};
 	const lang = options.lang || 'zh_cn';
 	const state = resList[status] || resList.default;
 	
-	body.data = data;
+	if (data) body.data = data;
+
 	body.code = state.code;
 	body.message =  state.message[lang];
 
@@ -20,10 +23,52 @@ const resList = {
 			en_us: 'ok',
 		},
 	},
+	[types.C2_REGISTER_SUCCESS]: {
+		code: 2001,
+		message: {
+			zh_cn: '注册成功',
+			en_us: '',
+		}
+	},
 	[types.C4_NOT_FOUND]: {
 		code: 404,
 		message: {
 			zh_cn: '您访问的资源不存在',
+			en_us: ''
+		},
+	},
+	[types.C4_EMAIL_FORMAT]: {
+		code: 4001,
+		message: {
+			zh_cn: '邮箱格式错误',
+			en_us: ''
+		},
+	},
+	[types.C4_EMAIL_DUPLICATE]: {
+		code: 4002,
+		message: {
+			zh_cn: '此邮箱已被使用',
+			en_us: ''
+		},
+	},
+	[types.C4_NICKNAME_FORMAT]: {
+		code: 4003,
+		message: {
+			zh_cn: '不能使用非法字符',
+			en_us: ''
+		},
+	},
+	[types.C4_NICKNAME_DUPLICATE]: {
+		code: 4004,
+		message: {
+			zh_cn: '此昵称已被使用',
+			en_us: ''
+		},
+	},
+	[types.C4_PASSWORD_FORMAT]: {
+		code: 4005,
+		message: {
+			zh_cn: '密码格式错误',
 			en_us: ''
 		},
 	},
@@ -34,6 +79,13 @@ const resList = {
 			en_us: '',
 		},
 	},
+	[types.C5_REGISTER_ERROR]: {
+		code: 5001,
+		message: {
+			zh_cn: '注册失败',
+			en_us:'',
+		}
+	},
 	default: {
 		code: 404,
 		message: {
@@ -43,8 +95,8 @@ const resList = {
 	},
 }
 interface ResponseBody {
-	message: string; // 信息
-	code: string | number; // 状态码
+	message?: string; // 信息
+	code?: string | number; // 状态码
 	data?: Object; // payload数据
 	status?: string | number; //状态
 };

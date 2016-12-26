@@ -1,32 +1,19 @@
-import { dispatch } from '../services/user';
-import { user } from '../constants/service';
+import User from '../services/user/';
+import resConfig from '../utils/resConfig';
+import { user as types }from '../constants/service';
 
 const router = require('koa-router')();
 
 router.get('/', function (ctx, next) {
 	const userId = ctx.session.user? ctx.session.user.id : '';
-	let resData = {};
-	if (userId) {
-		ctx.body = {
-			username: '1',
-			data: {},
-		};
-	} else {
-		ctx.body = "user not loginss";
-	}
+	const result: any = userId? { username: '1', data: {}}: "user not login";
+	return ctx.body = resConfig(result.status, result.data);
 });
 
 router.post('/registerWithEmail', async (ctx, next) => {
-	let result = {};
 	const { email, password, nickname } = ctx.request.body;
-	
-	result = await dispatch(user.REGISTER_WITH_EMAIL, {
-		email,
-		nickname,
-		password,
-	});
-	
-	return ctx.body = result;
+	const { status, data }              = await User[types.REGISTER_WITH_EMAIL]({email, password, nickname});
+	return ctx.body = resConfig(status, data);
 });
 
 export default router;

@@ -41,7 +41,7 @@ export default class Form {
 	}
 
 	inspectNickname (nickname) {
-		// const regexp = /[\u4E00-\u9FA5]{2,5}(?:·[\u4E00-\u9FA5]{2,5})*/;
+		// const regexp = /^([a-zA-Z]|[a-zA-Z0-9]|[\u4e00-\u9fa5]|[\.\_\-\'\"\?\+\=\@]){1,16}$/;
 		const regexp = /[a-zA-Z0-9]+/;
 		return this.inspectItem(regexp, nickname);
 	}
