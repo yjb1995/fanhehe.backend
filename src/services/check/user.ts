@@ -1,6 +1,15 @@
+/**
+ * check 中间件函数文件， 涉及所有关于user表的检测方法，均为纯函数。
+ * 一般规定最后一个参数为待测数据，而之前的参数为附加配置的参数。
+ * 禁止从外部获取数据。
+ */
+
 import * as types from '../../constants/response';
 
-// 邮箱格式检查
+/**
+ * [checkEmail 检查邮箱格式]
+ * @param {[type]} data [description]
+ */
 export function checkEmail (data) {
 	
 	const { email } = data;
@@ -10,7 +19,12 @@ export function checkEmail (data) {
 
 	return data;
 };
-// 昵称格式检查
+
+/**
+ * [checkNickname 昵称格式检查]
+ * @param {[object]} data [包含所需要检查的数据的对象]
+ * @returns 返回原数据 或可修改 为之后的中间价使用
+ */
 export function checkNickname (data) {
 	const { nickname } = data;
 	const regexp       = /^([a-zA-Z]|[a-zA-Z0-9]|[\u4e00-\u9fa5]|[\.\_\-\'\"\?\+\=\@]){1,16}$/;
@@ -20,16 +34,64 @@ export function checkNickname (data) {
 	return data;
 };
 
-// 数据库 属性唯一性检查 
-export const only = async (options: { table: any; where: any; error?: string| number;}, data?) => {
+/**
+ * [singleOnly [单项] 检测数据库数据唯一性]
+ * @param {[object]}    options       { table: 表的orm对象, name: 所查数据的键, error: 存在重复时抛出的异常 }
+ * @param {[object]}    data          所需要检测的数据。
+ * @returns 原数据
+ */
+export const singleOnly = async (options: { table: any; name?: string; error?: string; }, data?) => {
+	
 	const Table = options.table;
-	const { where, error } = options;
-	console.log('xxhhuuss',where);
-	const isDuplicate = await Table.find({where, attributes: ['id']})
-							.then((data) => data? data.dataValues.id: data)
-							.catch(error => {console.log(error); return true});
+	const { name, error } = options;
+	// 初始化
+	const where = { name: data[name]};
+	const result = await Table.find({ where, attributes: ['id'] })
+							.then(data   => data? data.dataValues.id: data)
+							.catch(error => { console.log(error); return  null });
 
-	if (isDuplicate) throw { status: error, error: true };
+	if (result) throw { error: true, status: error };
 
 	return data;
 };
+/**
+ * [multionly [多项] 检测数据库数据唯一性]
+ * @param {object} options       { table: 表的orm对象, where: 检测项及重复时抛出的异常, condition: 多项之间的关系, func: 'some'| 'every' }
+ * @param {object} data          待测数据
+ * @returns                      原始数据
+ */
+export const multiOnly = async (options: { table: any; where: any[]; condition?: string; }, data?) => {
+	const Table = options.table;
+	let { condition, where: params } = options;
+
+	// 初始化
+	condition = condition || '$and';
+
+	const names = params.map(item => item.name);
+	const errors = params.reduce((result, item) => { result[item.name] = item.error; return result; }, {});
+
+	const attributes = ['id', ...names];
+	const where = { [condition]: params.map(({name}) => ({ [name]: data[name] })) };
+
+	const result = await Table.find({ where, attributes })
+							.then(result => result? result.dataValues: {})
+							.then(checkDuplicate)
+							.catch(error => { console.log('xxxxxxxx', error); return error });
+
+	if (result && result.error) throw result;
+
+	return data;
+
+	function checkDuplicate (result) {
+		let error = false, key ='';
+		names.every(name => {
+			if (result[name] === data[name]) {
+				key = name;
+				error = true;
+				return false;
+			}
+			return true;
+		});
+		return error? { error: true, status: errors[key] }: result;
+	}
+}

@@ -16,4 +16,9 @@ router.post('/registerWithEmail', async (ctx, next) => {
 	return ctx.body = resConfig(status, data);
 });
 
+router.post('/loginWithEmail', async (ctx, next) => {
+	const { email, password, nickname } = ctx.request.body;
+	const { status, data }              = await User[types.LOGIN_WITH_EMAIL]({email, password});
+	return ctx.body =  resConfig(status, data);
+});
 export default router;
