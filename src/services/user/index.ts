@@ -1,5 +1,5 @@
 import Check from '../check';
-import { checkEmail, checkNickname, singleOnly, multiOnly } from '../check/user';
+import { checkEmail, checkNickname, singleOnly, multiOnly, checkPassword, checkHasLogin } from '../check/user';
 
 import { Main } from '../../db/mysql';
 import * as types from '../../constants/response';
@@ -32,19 +32,24 @@ export default {
 
 		if (!checkResult.error) { 
 			result = await Main.TUser.create(data).then(({ id }) => {
-				let status = C2_REGISTER_SUCCESS;
-				if (!id) status = C5_REGISTER_ERROR;
+				const status = id? C2_REGISTER_SUCCESS: C5_REGISTER_ERROR;
 				return { status };
 			}).catch(error => error);
 		}
-		
+
 		return {
 			...checkResult,
 			...result
 		};
 	},
-	async [methods.LOGIN_WITH_EMAIL] (data) {
+	async [methods.LOGIN_WITH_EMAIL] (data: { email: string; password: 'string'; session: any}) {
+		let result: any = {};
+		const { email, password, session } = data;
+		const check  = new Check (data);
 
+		//用户是否已登录中间件 
+		const checkResult = await check.with(checkHasLogin).with(checkEmail).with(checkPassword).end();
+		return { ...checkResult };
 	},
 };
 

@@ -37,6 +37,13 @@ const resList = {
 			en_us: ''
 		},
 	},
+	[types.C4_USER_HAS_LOGIN]: {
+		code: 4000,
+		message: {
+			zh_cn: '用户已登录',
+			en_us: '',
+		}
+	},
 	[types.C4_EMAIL_FORMAT]: {
 		code: 4001,
 		message: {

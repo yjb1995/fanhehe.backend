@@ -5,38 +5,63 @@ const config = require('../../config');
 
 class RedisStore extends Store{
 
-    redis: any;
+	private redis: any;
+	private prefix: string;
 
-    constructor (options) {
-        super();
-        const { port, host } = options;
-        this.redis = new redis(port, host);
-    }
+	constructor (options) {
+		super();
+		const { db, port, host, password } = options;
 
-    async get (sid) {
-        return await this.redis.get(`SESSION:${sid}`);
-    }
+		this.prefix = options.prefix || 'SID';
+		this.redis = new redis(port, host, { db, password });
+	};
 
-    async set (session, opts: { sid?: string | number }) {
-        let { sid } = opts;
-        if(!sid) sid = super.getID(24);
-        await this.redis.set(`SESSION:${sid}`, session);
-        return opts.sid;
-    }
+	encode (obj) {
+		const string = JSON.stringify(obj);
+		return new Buffer(string).toString('base64');
+	};
 
-    async destory (sid) {
-        return await this.redis.del(`SESSION:${sid}`);
-    }
+	decode (string: string) {
+		if (!string) return '';
+		let obj = '';
+
+		try {
+			obj = new Buffer(string, 'base64').toString();
+		} catch (error) {}
+
+		return JSON.parse(obj);
+	};
+	async get (sid) {
+		const prefix = this.prefix;
+		const session = await this.redis.get(`${prefix}${sid}`);
+		return this.decode(session);
+	};
+
+	async set (session, opts: { sid?: string | number }) {
+		let { sid } = opts;
+		const prefix = this.prefix;
+
+		if (!sid) sid = super.getID(24);
+		session = this.encode(session);
+		await this.redis.set(`${prefix}${sid}`, session);
+
+		return sid;
+	};
+
+	async destory (sid) {
+		const prefix = this.prefix;
+		return await this.redis.del(`${prefix}${sid}`);
+	};
 };
 
 export default function (app) {
-    const key = 'i am fan hehe';
-    const options = config.storage.session;
+	const key = 'FANHEHE.ID';
+	const options = config.storage.session;
+	const store = new RedisStore(options);
 
-    const store = new RedisStore(options);
-
-    return new session({
-        key,
-        store,
-    });
+	return new session({
+		key,
+		store,
+		maxAge: 1000 * 60 * 60 * 24,
+	});
 };

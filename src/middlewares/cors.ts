@@ -9,9 +9,8 @@ export class CORS {
     }
 
     public async checkOrigin (ctx, next) {
-
-        const { origin, host } = ctx.headers;
         const list = whiteList;
+        const { origin, host } = ctx.headers;
 
         const url = origin || host;
 

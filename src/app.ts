@@ -37,7 +37,7 @@ app.use(router.routes()).use(router.allowedMethods());
 app.use( (ctx, next) => {
 	const error = new Error('Not Found');
 	ctx.body = {
-		code: 500,
+		code: 404,
 		message: error.message,
 		error: error.message
 	}

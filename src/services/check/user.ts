@@ -35,6 +35,26 @@ export function checkNickname (data) {
 };
 
 /**
+ * [checkPassword 密码格式检查]
+ * @param {[object]} data [description]
+ */
+export function checkPassword (data) {
+	const { password } = data;
+	const regexp       = /^([a-zA-Z]|[a-zA-Z0-9]|[\.\_\-\'\"\?\+\=\@]){6,16}$/;
+	if (!regexp.test(password)) throw { error: true, status: types.C4_PASSWORD_FORMAT };
+	return data;
+}
+
+/**
+ * [checkHasLogin 检测用户是否已经登录]
+ * @param {[type]} data [description]
+ */
+export function checkHasLogin (data, options: { session:any }) {
+	const { session } = data;
+	return data;
+}
+
+/**
  * [singleOnly [单项] 检测数据库数据唯一性]
  * @param {[object]}    options       { table: 表的orm对象, name: 所查数据的键, error: 存在重复时抛出的异常 }
  * @param {[object]}    data          所需要检测的数据。
@@ -54,6 +74,7 @@ export const singleOnly = async (options: { table: any; name?: string; error?: s
 
 	return data;
 };
+
 /**
  * [multionly [多项] 检测数据库数据唯一性]
  * @param {object} options       { table: 表的orm对象, where: 检测项及重复时抛出的异常, condition: 多项之间的关系, func: 'some'| 'every' }
@@ -76,7 +97,7 @@ export const multiOnly = async (options: { table: any; where: any[]; condition?:
 	const result = await Table.find({ where, attributes })
 							.then(result => result? result.dataValues: {})
 							.then(checkDuplicate)
-							.catch(error => { console.log('xxxxxxxx', error); return error });
+							.catch(error => { console.log(error); return error });
 
 	if (result && result.error) throw result;
 
