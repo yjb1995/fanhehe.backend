@@ -49,11 +49,29 @@ export function checkPassword (data) {
  * [checkHasLogin 检测用户是否已经登录]
  * @param {[type]} data [description]
  */
-export function checkHasLogin (data, options: { session:any }) {
+export function checkHasLogin (data) {
 	const { session } = data;
+	if (session && session.id) throw { error: true, status: types.C4_USER_HAS_LOGIN };
 	return data;
 }
+/**
+ * [checkUserInfo description]
+ * @param {[type]} data    [description]
+ * @param {[type]} options [description]
+ */
+export async function checkUserInfo (options: { table: any }, data) {
+	const Table = options.table;
+	const { email, password } = data;
 
+	const result = await Table.find({ where: { email } })
+							.then( data => data? data.dataValues: {})
+							.catch( error => { console.log(error); return {} });
+
+	if (!result.id) throw { error: true, status: types.C4_ACCOUNT_NOT_EXIST };
+	if (result.password !== password) throw { error: true, status: types.C4_PASSWORD_ERROR };
+
+	return { ...data, ...result };
+}
 /**
  * [singleOnly [单项] 检测数据库数据唯一性]
  * @param {[object]}    options       { table: 表的orm对象, name: 所查数据的键, error: 存在重复时抛出的异常 }
@@ -65,7 +83,7 @@ export const singleOnly = async (options: { table: any; name?: string; error?: s
 	const Table = options.table;
 	const { name, error } = options;
 	// 初始化
-	const where = { name: data[name]};
+	const where = { name: data[name] };
 	const result = await Table.find({ where, attributes: ['id'] })
 							.then(data   => data? data.dataValues.id: data)
 							.catch(error => { console.log(error); return  null });

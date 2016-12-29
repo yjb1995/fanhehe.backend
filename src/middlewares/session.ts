@@ -42,6 +42,8 @@ class RedisStore extends Store{
 		const prefix = this.prefix;
 
 		if (!sid) sid = super.getID(24);
+
+		session.salt = sid; // 加盐.
 		session = this.encode(session);
 		await this.redis.set(`${prefix}${sid}`, session);
 

@@ -12,13 +12,13 @@ router.get('/', function (ctx, next) {
 
 router.post('/registerWithEmail', async (ctx, next) => {
 	const { email, password, nickname } = ctx.request.body;
-	const { status, data }              = await User[types.REGISTER_WITH_EMAIL]({ email, password, nickname });
+	const { status, data }              = await User[types.REGISTER_WITH_EMAIL](ctx, { email, password, nickname });
 	return ctx.body = resConfig(status, data);
 });
 
 router.post('/loginWithEmail', async (ctx, next) => {
 	const { email, password, nickname } = ctx.request.body;
-	const { status, data }              = await User[types.LOGIN_WITH_EMAIL]({ email, password, session: ctx.session });
+	const { status, data }              = await User[types.LOGIN_WITH_EMAIL](ctx, { email, password, session: ctx.session });
 	return ctx.body =  resConfig(status, data);
 });
 

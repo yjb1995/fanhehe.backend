@@ -5,21 +5,24 @@ export const C1_CONTINUE = 'C1_CONTINUE';
 // 2
 export const C2_OK = 'C2_OK';
 export const C2_REGISTER_SUCCESS = 'C2_REGISTER_SUCCESS';
+export const C2_LOGIN_SUCCESS = 'C2_LOGIN_SUCCESS'; // 用户登陆成功
 // 3
 export const C3_NOT_MODIFED = 'C3_NOT_MODIFED';
 // 4
-export const C4_NOT_FOUND = 'C4_NOT_FOUND';
-export const C4_BAD_REQUEST = 'C4_BAD_REQUEST';
+export const C4_NOT_FOUND = 'C4_NOT_FOUND';  // 404 资源未找到
+export const C4_BAD_REQUEST = 'C4_BAD_REQUEST'; // bad request
 // 4. email 错误
-export const C4_EMAIL_FORMAT = 'C4_EMAIL_FORMAT';
-export const C4_EMAIL_DUPLICATE = 'C4_EMAIL_DUPLICATE';
+export const C4_EMAIL_FORMAT = 'C4_EMAIL_FORMAT'; // 邮箱格式错误
+export const C4_EMAIL_DUPLICATE = 'C4_EMAIL_DUPLICATE'; // 该邮箱已被注册
 
-export const C4_NICKNAME_FORMAT = 'C4_NICKNAME_FORMAT';
-export const C4_NICKNAME_DUPLICATE = 'C4_NICKNAME_DUPLICATE';
+export const C4_NICKNAME_FORMAT = 'C4_NICKNAME_FORMAT'; // 昵称格式错误
+export const C4_NICKNAME_DUPLICATE = 'C4_NICKNAME_DUPLICATE'; // 存在相同的昵称
 
-export const C4_PASSWORD_FORMAT = 'C4_PASSWORD_FORMAT'; 
-export const C4_USER_HAS_LOGIN = 'C4_USER_HAS_LOGIN';
+export const C4_PASSWORD_FORMAT = 'C4_PASSWORD_FORMAT'; // 密码格式错误
+export const C4_USER_HAS_LOGIN = 'C4_USER_HAS_LOGIN'; // 用户已登陆
 
+export const C4_ACCOUNT_NOT_EXIST = 'C4_ACCOUNT_NOT_EXIST'; // 账号不存在
+export const C4_PASSWORD_ERROR = 'C4_PASSWORD_ERROR'; // 密码错我
 // 5
 export const C5_BAD_GATEWAY = 'C5_BAD_GATEWAY';
 export const C5_SERVER_ERROR = 'C5_SERVER_ERROR';

@@ -30,6 +30,13 @@ const resList = {
 			en_us: '',
 		}
 	},
+	[types.C2_LOGIN_SUCCESS]: {
+		code: 2002,
+		message: {
+			zh_cn: '登陆成功',
+			en_us: '',
+		},
+	},
 	[types.C4_NOT_FOUND]: {
 		code: 404,
 		message: {
@@ -77,6 +84,20 @@ const resList = {
 		message: {
 			zh_cn: '密码格式错误',
 			en_us: ''
+		},
+	},
+	[types.C4_ACCOUNT_NOT_EXIST]: {
+		code: 4006,
+		message: {
+			zh_cn: '账号不存在',
+			en_us: '',
+		},
+	},
+	[types.C4_PASSWORD_ERROR]: {
+		code: 4007,
+		message: {
+			zh_cn: '密码输入错误',
+			en_us: '',
 		},
 	},
 	[types.C5_SERVER_ERROR]: {
