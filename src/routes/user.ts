@@ -1,25 +1,29 @@
 import User from '../services/user/';
 import resConfig from '../utils/resConfig';
-import { user as types }from '../constants/service';
+import { user as Actions }from '../constants/service';
 
 const router = require('koa-router')();
 
-router.get('/', function (ctx, next) {
-	const userId = ctx.session.user? ctx.session.user.id : '';
-	const result: any = userId? { username: '1', data: {}}: "user not login";
-	return ctx.body = resConfig(result.status, result.data);
-});
-
 router.post('/registerWithEmail', async (ctx, next) => {
 	const { email, password, nickname } = ctx.request.body;
-	const { status, data }              = await User[types.REGISTER_WITH_EMAIL](ctx, { email, password, nickname });
+	const { status, data }              = await User[Actions.REGISTER_WITH_EMAIL](ctx, { email, password, nickname });
 	return ctx.body = resConfig(status, data);
 });
 
 router.post('/loginWithEmail', async (ctx, next) => {
 	const { email, password, nickname } = ctx.request.body;
-	const { status, data }              = await User[types.LOGIN_WITH_EMAIL](ctx, { email, password, session: ctx.session });
+	const { status, data }              = await User[Actions.LOGIN_WITH_EMAIL](ctx, { email, password, session: ctx.session });
 	return ctx.body =  resConfig(status, data);
 });
 
+router.get('/logout', async (ctx, next) => {
+	const { status, data } = await User[Actions.LOGOUT](ctx, {});
+	return ctx.body = resConfig(status, data); 
+});
+router.get('/userInfo/:id', async (ctx, next) => {
+	const { session } = ctx;
+	const { id } = ctx.param;
+	const { staus, data } = await User[Actions.GET_USER_INFO_BY_ID](ctx, { session, id });
+	return ctx.body = resConfig(status, data);
+});
 export default router;

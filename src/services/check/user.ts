@@ -6,6 +6,12 @@
 
 import * as types from '../../constants/response';
 
+// 用户信息筛选器
+export const Attr = {
+	default: ['id', 'username', 'nickname', 'preview', 'gender', 'email', 'telephone'],
+	master: ['password'],
+};
+
 /**
  * [checkEmail 检查邮箱格式]
  * @param {[type]} data [description]
@@ -15,7 +21,7 @@ export function checkEmail (data) {
 	const { email } = data;
 	const regexp    = /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/;
 
-	if (!regexp.test(email)) throw { error: true, status: types.C4_EMAIL_FORMAT };
+	if (!regexp.test(email)) throw { status: types.C4_EMAIL_FORMAT };
 
 	return data;
 };
@@ -29,7 +35,7 @@ export function checkNickname (data) {
 	const { nickname } = data;
 	const regexp       = /^([a-zA-Z]|[a-zA-Z0-9]|[\u4e00-\u9fa5]|[\.\_\-\'\"\?\+\=\@]){1,16}$/;
 
-	if (!regexp.test(nickname)) throw { error: true, status: types.C4_NICKNAME_FORMAT }; 
+	if (!regexp.test(nickname)) throw { status: types.C4_NICKNAME_FORMAT }; 
 
 	return data;
 };
@@ -41,7 +47,7 @@ export function checkNickname (data) {
 export function checkPassword (data) {
 	const { password } = data;
 	const regexp       = /^([a-zA-Z]|[a-zA-Z0-9]|[\.\_\-\'\"\?\+\=\@]){6,16}$/;
-	if (!regexp.test(password)) throw { error: true, status: types.C4_PASSWORD_FORMAT };
+	if (!regexp.test(password)) throw { status: types.C4_PASSWORD_FORMAT };
 	return data;
 }
 
@@ -49,9 +55,14 @@ export function checkPassword (data) {
  * [checkHasLogin 检测用户是否已经登录]
  * @param {[type]} data [description]
  */
-export function checkHasLogin (data) {
+export function shouldNotLogin (data) {
 	const { session } = data;
-	if (session && session.id) throw { error: true, status: types.C4_USER_HAS_LOGIN };
+	if (session && session.id) throw { status: types.C4_USER_SHOULD_NOT_LOGIN };
+	return data;
+}
+export function shouldLogin (data) {
+	const { session } = data;
+	if (!(session && session.id)) throw { status: types.C4_USER_SHOULD_LOGIN };
 	return data;
 }
 /**
@@ -63,14 +74,18 @@ export async function checkUserInfo (options: { table: any }, data) {
 	const Table = options.table;
 	const { email, password } = data;
 
-	const result = await Table.find({ where: { email } })
+	// attributes
+	const attributes = [...Attr.default, ...Attr.master];
+	const result = await Table.find({ where: { email }, attributes })
 							.then( data => data? data.dataValues: {})
 							.catch( error => { console.log(error); return {} });
 
 	if (!result.id) throw { error: true, status: types.C4_ACCOUNT_NOT_EXIST };
-	if (result.password !== password) throw { error: true, status: types.C4_PASSWORD_ERROR };
-
-	return { ...data, ...result };
+	if (result.password !== password) throw { status: types.C4_PASSWORD_ERROR };
+	// 去掉密码信息
+	delete result.password;
+	// 返回信息
+	return { ...data, data: { ...result,  } };
 }
 /**
  * [singleOnly [单项] 检测数据库数据唯一性]
@@ -88,7 +103,7 @@ export const singleOnly = async (options: { table: any; name?: string; error?: s
 							.then(data   => data? data.dataValues.id: data)
 							.catch(error => { console.log(error); return  null });
 
-	if (result) throw { error: true, status: error };
+	if (result) throw { status: error };
 
 	return data;
 };

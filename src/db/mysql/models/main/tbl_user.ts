@@ -37,7 +37,7 @@ module.exports = function (sequelize, DataTypes) {
 	college:{
 	  type : DataTypes.CHAR(4)
 	},
-	sex:{
+	gender:{
 	  type : DataTypes.CHAR(2)
 	},
 	telephone:{

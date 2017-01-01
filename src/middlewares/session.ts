@@ -50,8 +50,9 @@ class RedisStore extends Store{
 		return sid;
 	};
 
-	async destory (sid) {
+	async destroy (sid) {
 		const prefix = this.prefix;
+		console.log(`${prefix}${sid}`, 'xxxxxx');
 		return await this.redis.del(`${prefix}${sid}`);
 	};
 };

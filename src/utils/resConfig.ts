@@ -24,17 +24,24 @@ const resList = {
 		},
 	},
 	[types.C2_REGISTER_SUCCESS]: {
-		code: 2001,
+		code: 200,
 		message: {
 			zh_cn: '注册成功',
 			en_us: '',
 		}
 	},
 	[types.C2_LOGIN_SUCCESS]: {
-		code: 2002,
+		code: 200,
 		message: {
 			zh_cn: '登陆成功',
 			en_us: '',
+		},
+	},
+	[types.C2_LOGOUT_SUCCESS]:{
+		code: 200,
+		message: {
+			zh_cn: '退出成功',
+			en_us: ''
 		},
 	},
 	[types.C4_NOT_FOUND]: {
@@ -44,12 +51,19 @@ const resList = {
 			en_us: ''
 		},
 	},
-	[types.C4_USER_HAS_LOGIN]: {
+	[types.C4_USER_SHOULD_NOT_LOGIN]: {
 		code: 4000,
 		message: {
 			zh_cn: '用户已登录',
 			en_us: '',
 		}
+	},
+	[types.C4_USER_SHOULD_LOGIN]: {
+		code: 40001,
+		message: {
+			zh_cn: '用户未登陆',
+			en_us: '',
+		},
 	},
 	[types.C4_EMAIL_FORMAT]: {
 		code: 4001,
