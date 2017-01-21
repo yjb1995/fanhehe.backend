@@ -1,6 +1,5 @@
 import Koa = require('koa');
 import path = require('path');
-import KeyGrip = require('keygrip');
 
 import json = require('koa-json');
 import logger = require('koa-logger');
@@ -15,9 +14,6 @@ import favicon from './middlewares/favicon';
 import session  from './middlewares/session';
 
 const app = new Koa();
-
-app.keys = new KeyGrip(['i ams fan hehe'], 'sha256');
-
 // 处理时间
 app.use(time);
 // middlewares

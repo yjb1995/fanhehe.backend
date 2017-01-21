@@ -20,9 +20,10 @@ router.get('/logout', async (ctx, next) => {
 	const { status, data } = await User[Actions.LOGOUT](ctx, {});
 	return ctx.body = resConfig(status, data); 
 });
+
 router.get('/userInfo/:id', async (ctx, next) => {
 	const { session } = ctx;
-	const { id } = ctx.param;
+	const { id } = ctx.params;
 	const { staus, data } = await User[Actions.GET_USER_INFO_BY_ID](ctx, { session, id });
 	return ctx.body = resConfig(status, data);
 });
