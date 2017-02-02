@@ -11,7 +11,9 @@
 		},
 		"whiteList": [
 			"http://www.fanhehe.com",
-			"https://www.fanhehe.com"
+			"https://www.fanhehe.com",
+            "http://115.29.49.204/",
+            "115.29.49.204"
 		],
 		"storage": {
 			"main": {
