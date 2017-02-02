@@ -13,7 +13,9 @@ class RedisStore extends Store{
 		const { db, port, host, password } = options;
 
 		this.prefix = options.prefix || 'SID';
-		this.redis = new redis(port, host, { db, password });
+		try {
+			this.redis = new redis(port, host, { db, password });
+		} catch (e) { console.log(e); }
 	};
 
 	encode (obj) {

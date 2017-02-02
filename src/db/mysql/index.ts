@@ -11,7 +11,6 @@ function initializeWith (config: DBConfig) {
 
 function connect(config :DBConfig): sequelize {
 	const { port, host, username, password, database, connectionLimit } = config;
-
 	return new sequelize(
 		database,
 		username,
