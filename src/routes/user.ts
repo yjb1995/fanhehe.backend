@@ -18,7 +18,7 @@ router.post('/loginWithEmail', async (ctx, next) => {
 
 router.get('/logout', async (ctx, next) => {
 	const { status, data } = await User[Actions.LOGOUT](ctx, {});
-	return ctx.body = resConfig(status, data); 
+	return ctx.body = resConfig(status, data);
 });
 
 router.get('/userInfo/:id', async (ctx, next) => {

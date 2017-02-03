@@ -3,6 +3,9 @@
 This is a server with nodejs for my own [personal page](https://github.com/fanhehe/fanhehe.github.io).
 
 
+- before running, u need start mysql and redis service at your local.
+- the service port can be set anyone legal, and u can change configuration at config/
+
 ## development flow
 
 * git clone git@github.com/fanhehe/fanhehe.backend && cd fanhehe.backend
