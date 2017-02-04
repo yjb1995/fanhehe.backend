@@ -1,10 +1,14 @@
 import user from './user';
-import blog from './blog';
+import article from './article';
+
 
 const router = require('koa-router')();
 
 router.prefix('/api');
-router.use('/user', user.routes(), user.allowedMethods());
-router.use('/blog', blog.routes(), blog.allowedMethods());
+
+// user 表
+router.use('', user.routes(), user.allowedMethods());
+// article 表 
+router.use('', article.routes(), article.allowedMethods());
 
 export default router;

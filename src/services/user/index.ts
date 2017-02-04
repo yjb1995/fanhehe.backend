@@ -4,7 +4,8 @@ import * as checks from '../check/user';
 
 import { Main } from '../../db/mysql';
 import * as types from '../../constants/response';
-import { user as methods} from '../../constants/service';
+
+import { user as methods} from '../../common/constants/request';
 
 
 export default {
@@ -12,7 +13,7 @@ export default {
 	 * @param  {} payload
 	 * @returns
 	 */
-	async [methods.REGISTER_WITH_EMAIL] (ctx, data) {
+	async [ methods.REGISTER_WITH_EMAIL.name ] (ctx, data) {
 		let result: any = {};
 		const check = new Check(data);
 		const { email, nickname } = data;
@@ -45,7 +46,7 @@ export default {
 	 * [ctx description]
 	 * @type {[type]}
 	 */
-	async [methods.LOGIN_WITH_EMAIL] (ctx, data: { email: string; password: 'string'; session: any}) {
+	async [ methods.LOGIN_WITH_EMAIL.name ] (ctx, data: { email: string; password: 'string'; session: any}) {
 		
 		const result: any  = {};
 		const { email, password, session } = data;
@@ -72,7 +73,7 @@ export default {
 	 * [ctx description]
 	 * @type {[type]}
 	 */
-	async [methods.LOGOUT] (ctx, data: any) {
+	async [ methods.LOGOUT.name ] (ctx, data: any) {
 		const { session } = ctx;
 		const check = new Check({ session });
 		// 成功的状态
@@ -84,7 +85,7 @@ export default {
 		if (!checkResult.error) ctx.session = null;
 		return { status, ...checkResult };
 	},
-	async [methods.GET_USER_INFO_BY_ID] (ctx, data) {
+	async [ methods.GET_USER_INFO_BY_ID.name ] (ctx, data) {
 		const { session, id} = data;
 		const check = new Check({ session, id });
 	}

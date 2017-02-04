@@ -5,3 +5,8 @@ export const user = {
     LOGIN_WITH_EMAIL: 'LOGIN_WITH_EMAIL',
     LOGOUT: 'LOGOUT',
 };
+
+export const article = {
+	GET_ALL: 'GET_ALL',
+	GET_ALL_BY_TYPE: 'GET_ALL_BY_TYPE',
+}
