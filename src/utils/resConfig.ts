@@ -58,6 +58,13 @@ export const C5_SERVER_ERROR = 'C5_SERVER_ERROR';
 export const C5_REGISTER_ERROR = 'C5_REGISTER_ERROR';
 
 const resList = {
+	200: {
+		code: 200,
+		message: {
+			zh_cn: '成功',
+			en_us: ''
+		},
+	},
 	[C2_OK]: {
 		code: 200,
 		message: {

@@ -25,10 +25,10 @@ module.exports = function (sequelize, DataTypes) {
 			defaultValue: 1,
 		},
 	}, {
-		timestamps: true,
+		timestamps: false,
 		primaryKey: ['author', 'title'],
-		createAt: 'create_time',
-		UpdateAt: 'last_modify_time',
+		// createAt: 'create_time',
+		// UpdateAt: 'last_modify_time',
 		tableName: 'tbl_article',
 		freezeTableName: true
 	});

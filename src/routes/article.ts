@@ -5,7 +5,7 @@ import Article from '../services/article';
 import { article } from '../common/constants/request';
 
 
-router.get('/getAll', async (ctx, next) => {
+router.get(article.GET_ALL.path, async (ctx, next) => {
 	let { limit, offset, } = ctx.query;
 	// 初始化
 	limit = limit && limit < 40? limit : 20;
