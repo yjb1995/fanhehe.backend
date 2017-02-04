@@ -1,7 +1,7 @@
-import { article as methods } from '../../constants/service';
+import { article as methods } from '../../common/constants/request';
 
 export default {
-	[methods.GET_ALL] ({ offset, limit }) {
-		return {status:1, data: {}};
+	[ methods.GET_ALL.name ] ({ offset, limit }) {
+		return { status:'C2_Ok', data: {s:1} };
 	},
 };

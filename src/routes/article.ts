@@ -10,8 +10,8 @@ router.get('/getAll', async (ctx, next) => {
 	// 初始化
 	limit = limit && limit < 40? limit : 20;
 	offset = offset && offset > -1? offset : 0;
-
-	const { status, data } = await Article[ article.GET_ALL.name ]({ limit, offset });
+	// 处理请求
+	const { status, data } = await Article[ article.GET_ALL.name ] ({ limit, offset });
 
 	return ctx.body = resConfig(status, data);
 });

@@ -3,10 +3,9 @@ import * as checks from '../check/user';
 // import { checkEmail, checkNickname, singleOnly, multiOnly, checkPassword, shouldLogin, shouldNotLogin, checkUserInfo } from '../check/user';
 
 import { Main } from '../../db/mysql';
-import * as types from '../../constants/response';
+import * as types from '../../utils/resConfig';
 
 import { user as methods} from '../../common/constants/request';
-
 
 export default {
 	/**

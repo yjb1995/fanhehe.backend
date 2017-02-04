@@ -4,7 +4,7 @@
  * 禁止从外部获取数据。
  */
 
-import * as types from '../../constants/response';
+import * as types from '../../utils/resConfig';
 
 // 用户信息筛选器
 export const Attr = {

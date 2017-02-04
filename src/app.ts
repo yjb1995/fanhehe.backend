@@ -24,12 +24,11 @@ app.use(session(app));
 app.use(convert(morgan('dev')));
 app.use(favicon());
 
-
 // cors
 app.use(cors.checkOrigin);
 // routes
 app.use(router.routes()).use(router.allowedMethods());
-
+// 处理未捕获的请求
 app.use( (ctx, next) => {
 	const error = new Error('Not Found');
 	ctx.body = {
