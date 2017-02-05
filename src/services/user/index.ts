@@ -84,6 +84,10 @@ export default {
 		if (!checkResult.error) ctx.session = null;
 		return { status, ...checkResult };
 	},
+	/**
+	 * [ctx description]
+	 * @type {[type]}
+	 */
 	async [ methods.GET_USER_INFO_BY_ID.name ] (ctx, data) {
 		const { session, id} = data;
 		const check = new Check({ session, id });

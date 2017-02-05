@@ -1,9 +1,8 @@
-import User from '../services/user/';
+const router = require('koa-router')();
 import resConfig from '../utils/resConfig';
 
+import User from '../services/user/';
 import { user } from '../common/constants/request';
-
-const router = require('koa-router')();
 
 router.post(user.REGISTER_WITH_EMAIL.path, async (ctx, next) => {
 	const { email, password, nickname } = ctx.request.body;
