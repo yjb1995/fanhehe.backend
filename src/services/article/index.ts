@@ -4,12 +4,39 @@ import { Main } from '../../db/mysql';
 import { article as methods } from '../../common/constants/request';
 
 export default {
-	async [ methods.GET_ALL.name ] ({ offset, limit }) {
+	/**
+	 * [offset description]
+	 * @type {[type]}
+	 * @param {}
+	 * @returns {}
+	 */
+	async [ methods.GET_ALL.name ] (data) {
 		const status = 200;
-		const data = await Main.TArticle.findAll({
+		const { limit, offset } = data;
+		const result = await Main.TArticle.findAll({
 			limit,
 			offset,
-		}).then((data) => data? data: null );
-		return { status, data };
+			where: { status: 1 },
+		}).then( data => data );
+
+		return { status, data: result? result : null };
+	},
+	async [ methods.GET_ARTICLE_BY_ID.name ] (data) {
+		const status = 200;
+		const { id } = data;
+		const result = await Main.TArticle.findById(id, {}).then( data => data );
+
+		return { status: 'default', data: result? result: null };
+	},
+	/**
+	 * [type description]
+	 * @type {[type]}
+	 */
+	async [ methods.GET_ALL_BY_TYPE.name] (data) {
+		const status = 200;
+		const { type, limit, offset } = data;
+		const result = await Main.TArticle.findAll({ where: { type } }).then( data => data);
+
+		return { status, data: result? result: null };
 	},
 };
