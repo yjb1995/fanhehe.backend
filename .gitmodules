@@ -1,3 +1,3 @@
 [submodule "common"]
 	path = src/common
-	url = git@github.com:fanhehe/common
+	url = https://github.com/Fanhehe/common.git
