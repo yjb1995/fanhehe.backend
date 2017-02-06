@@ -5,19 +5,22 @@ module.exports = function (sequelize, DataTypes) {
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		author: {
-			type : DataTypes.STRING(40),
-		},
-		title: {
+		username: {
 			type: DataTypes.STRING(40),
+		},
+		reply_to: {
+			type: DataTypes.STRING(40),
+		},
+		article_id: {
+			type: DataTypes.INTEGER(11),
+		},
+		parent_id: {
+			type: DataTypes.INTEGER(11),
 		},
 		content: {
 			type: DataTypes.TEXT,
 		},
 		create_time: {
-			type: DataTypes.DATE,
-		},
-		last_modify_time: {
 			type: DataTypes.DATE,
 		},
 		status: {
@@ -29,7 +32,7 @@ module.exports = function (sequelize, DataTypes) {
 		timestamps: false,
 		// createAt: 'create_time',
 		// UpdateAt: 'last_modify_time',
-		tableName: 'tbl_article',
+		tableName: 'tbl_article_comments',
 		freezeTableName: true
 	});
 };
