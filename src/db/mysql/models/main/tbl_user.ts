@@ -23,9 +23,6 @@ module.exports = function (sequelize, DataTypes) {
 		create_time: {
 			type: DataTypes.DATE,
 		},
-		last_login_time: {
-			type : DataTypes.DATE,
-		},
 		qq:{
 			type: DataTypes.STRING(20),
 		},

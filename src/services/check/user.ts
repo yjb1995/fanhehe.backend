@@ -39,7 +39,14 @@ export function checkNickname (data) {
 
 	return data;
 };
+export function checkUsername (data) {
+	const { username } = data;
+	const regexp       = /^([a-zA-Z]|[0-9]){5,12}$/;
 
+	if (!regexp.test(username)) throw { status: types.C4_USERNAME_FORMAT };
+	
+	return data;
+};
 /**
  * [checkPassword 密码格式检查]
  * @param {[object]} data [description]
@@ -60,6 +67,10 @@ export function shouldNotLogin (data) {
 	if (session && session.id) throw { status: types.C4_USER_SHOULD_NOT_LOGIN };
 	return data;
 }
+/**
+ * [shouldLogin description]
+ * @param {[type]} data [description]
+ */
 export function shouldLogin (data) {
 	const { session } = data;
 	if (!(session && session.id)) throw { status: types.C4_USER_SHOULD_LOGIN };
@@ -72,15 +83,19 @@ export function shouldLogin (data) {
  */
 export async function checkUserInfo (options: { table: any }, data) {
 	const Table = options.table;
-	const { email, password } = data;
+	const { username, email, password } = data;
+	const where:{ password: string; email?: string; username?: string;} = { password };
+
+	if (email) where.email = email;
+	if (username) where.username = username;
 
 	// attributes
 	const attributes = [...Attr.default, ...Attr.master];
-	const result = await Table.find({ where: { email }, attributes })
+	const result = await Table.find({ where, attributes })
 							.then( data => data? data.dataValues: {})
 							.catch( error => { console.log(error); return {} });
 
-	if (!result.id) throw { error: true, status: types.C4_ACCOUNT_NOT_EXIST };
+	if (!result.id) throw { status: types.C4_ACCOUNT_NOT_EXIST };
 	if (result.password !== password) throw { status: types.C4_PASSWORD_ERROR };
 	// 去掉密码信息
 	delete result.password;

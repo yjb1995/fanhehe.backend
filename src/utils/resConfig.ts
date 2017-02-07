@@ -46,12 +46,18 @@ export const C4_EMAIL_DUPLICATE = 'C4_EMAIL_DUPLICATE'; // 该邮箱已被注册
 export const C4_NICKNAME_FORMAT = 'C4_NICKNAME_FORMAT'; // 昵称格式错误
 export const C4_NICKNAME_DUPLICATE = 'C4_NICKNAME_DUPLICATE'; // 存在相同的昵称
 
+export const C4_USERNAME_FORMAT = 'C4_USERNAME_FORMAT';
+export const C4_USERNAME_DUPLICATE = 'C4_USERNAME_DUPLICATE';
+
 export const C4_PASSWORD_FORMAT = 'C4_PASSWORD_FORMAT'; // 密码格式错误
 export const C4_USER_SHOULD_LOGIN = 'C4_USER_SHOULD_LOGIN'; //用户应该登陆
 export const C4_USER_SHOULD_NOT_LOGIN = 'C4_USER_SHOULD_NOT_LOGIN'; // 用户不应该登陆
 
 export const C4_ACCOUNT_NOT_EXIST = 'C4_ACCOUNT_NOT_EXIST'; // 账号不存在
 export const C4_PASSWORD_ERROR = 'C4_PASSWORD_ERROR'; // 密码错误
+export const C4_ID_TYPE_ERROR = 'C4_ID_TYPE_ERROR'; // 数据格式错误
+
+
 // 5
 export const C5_BAD_GATEWAY = 'C5_BAD_GATEWAY';
 export const C5_SERVER_ERROR = 'C5_SERVER_ERROR';
@@ -160,6 +166,27 @@ const resList = {
 		code: 4007,
 		message: {
 			zh_cn: '密码输入错误',
+			en_us: '',
+		},
+	},
+	[C4_ID_TYPE_ERROR]: {
+		code: 4008,
+		message: {
+			zh_cn: '输入数据格式错误',
+			en_us: '',
+		},
+	},
+	[C4_USERNAME_DUPLICATE]: {
+		code: 4009,
+		message: {
+			zh_cn: '用户名已被使用',
+			en_us: '',
+		},
+	},
+	[C4_USERNAME_FORMAT]: {
+		code: 4010,
+		message: {
+			zh_cn: '用户名格式错误',
 			en_us: '',
 		},
 	},

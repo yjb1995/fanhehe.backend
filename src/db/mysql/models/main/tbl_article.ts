@@ -7,6 +7,11 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		author: {
 			type : DataTypes.STRING(40),
+			field: 'author',
+			references: {
+				model: 'TUser',
+				key: 'username',
+			},
 		},
 		title: {
 			type: DataTypes.STRING(40),
