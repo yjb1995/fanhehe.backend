@@ -17,12 +17,14 @@ export default {
 		const { checkLimitAndOffset } = checks;
 		const checkResult = await check.with(checkLimitAndOffset).end();
 		const { limit, offset } = checkResult;
-		
+
 		const result = await Main.TArticle.findAll({
 			limit,
 			offset,
 			where: { status: 1 },
-		}).then( data => data );
+		}).then( data => {
+			return data;
+		} );
 
 		return { status: 1, data: result? result : null };
 	},

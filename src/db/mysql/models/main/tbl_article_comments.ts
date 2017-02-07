@@ -1,5 +1,5 @@
 module.exports = function (sequelize, DataTypes) {
-	return sequelize.define('tbl_user', {
+	return sequelize.define('tbl_article_comments', {
 		id: {
 			type: DataTypes.INTEGER(11),
 			autoIncrement: true,
