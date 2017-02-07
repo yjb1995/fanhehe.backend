@@ -5,15 +5,16 @@
  */
 import * as types from '../../utils/resConfig';
 
-export function checkLimitAndOffset (data) {
-	const minOffset = 0;
-	let { offset, limit, maxLimit } = data;
+// 检查 limit offset 的 因为 不必获取 所以 无用了。
+// export function checkLimitAndOffset (data) {
+// 	const minOffset = 0;
+// 	let { offset, limit, maxLimit } = data;
 
-	limit = limit && limit <= maxLimit? +limit : maxLimit;
-	offset = offset && offset >= minOffset? +offset : minOffset;
+// 	limit = limit && limit <= maxLimit? +limit : maxLimit;
+// 	offset = offset && offset >= minOffset? +offset : minOffset;
 
-	return { ...data, limit, offset };
-};
+// 	return { ...data, limit, offset };
+// };
 
 export function checkId (data) {
 	let { id } = data;
@@ -23,3 +24,12 @@ export function checkId (data) {
 
 	return { ...data, id };
 }
+
+export function checkPageId (data) {
+	let { pageId: id } = data;
+	id = id && id > 0? +id: 0;
+
+	if (typeof id !== 'number' || isNaN(id) || id <= 0) throw { status: types.C4_ID_TYPE_ERROR };
+
+	return { ...data, pageId: id };
+};

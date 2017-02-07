@@ -5,8 +5,8 @@ const { main: MainConfig} = require('../../../config/').storage;
 export const Main = initializeWith(MainConfig);
 
 // Main中得数据表关系定义s
-
-
+Main.TUser.hasMany(Main.TArticle, { foreignKey: 'author', targetKey: 'username', as: 'Article' });
+// Main.TArticle.belongsTo(Main.TUser, { foreignKey: 'author', as: 'Article'});
 function initializeWith (config: DBConfig) {
 	const client = connect(config);
 	return syncTables(client);

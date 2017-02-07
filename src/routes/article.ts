@@ -5,14 +5,14 @@ import Article from '../services/article/';
 import { article } from '../common/constants/request';
 
 router.get(article.GET_ALL.path, async (ctx, next) => {
-	let { limit, offset, } = ctx.query;
-	const { status, data } = await Article [ article.GET_ALL.name ] ({ limit, offset });
+	let { pageId } = ctx.query;
+	const { status, data } = await Article [ article.GET_ALL.name ] ({ pageId });
 	return ctx.body = resConfig(status, data);
 });
 
 router.get(article.GET_ALL_BY_TYPE.path, async (ctx, next) => {
-	let { limit, offset, type } = ctx.query;
-	const { status, data } = await Article [ article.GET_ALL_BY_TYPE.name ] ({ limit, offset, type });
+	let { pageId, type } = ctx.query;
+	const { status, data } = await Article [ article.GET_ALL_BY_TYPE.name ] ({ type, pageId });
 	return ctx.body = resConfig(status, data);
 });
 

@@ -12,19 +12,23 @@ export default {
 	 * @returns {}
 	 */
 	async [ methods.GET_ALL.name ] (data) {
-		const maxLimit = methods.GET_ALL.limit;
-		const check = new Check({ ...data, maxLimit });
-		const { checkLimitAndOffset } = checks;
-		const checkResult = await check.with(checkLimitAndOffset).end();
-		const { limit, offset } = checkResult;
+		const check = new Check(data);
 
-		const result = await Main.TArticle.findAll({
+		const { checkPageId } = checks;
+		const checkResult = await check.with(checkPageId).end();
+		const { pageId } = checkResult;
+
+		const { limit }= methods.GET_ALL;
+		const offset = (pageId - 1) * limit;
+		
+		const result = await Main.TArticle.findAndCount({
 			limit,
 			offset,
 			where: { status: 1 },
 		}).then( data => {
+			if (data) data.pageCount = Math.ceil(data.count / limit);
 			return data;
-		} );
+		}).catch ( error => { console.log(error); return null; });
 
 		return { status: 1, data: result? result : null };
 	},
@@ -40,7 +44,7 @@ export default {
 	 */
 	async [ methods.GET_ALL_BY_TYPE.name] (data) {
 		const status = 200;
-		const { type, limit, offset } = data;
+		const { type } = data;
 		const result = await Main.TArticle.findAll({ where: { type } }).then( data => data);
 
 		return { status, data: result? result: null };
