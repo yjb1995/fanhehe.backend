@@ -12,30 +12,18 @@ export default {
 	 * @returns {}
 	 */
 	async [ methods.GET_ALL.name ] (data) {
-		let result: any = {};
-		const status = 200;
-		// 检查插件
-		const check = new Check(data);
-		const { checkPageId } = checks;
-		const checkResult = await check.with(checkPageId).end();
-		// 检查结果
-		const { pageId } = checkResult;
-		// 分页: limit and offset
-		const { limit }= methods.GET_ALL;
-		const offset = (pageId - 1) * limit;
+		const { limit } = methods.GET_ALL;
+		// 引入及初始化检查插件
+		const check = new Check({ ...data, limit});
+		let { checkPageId, getArticleList, getAuthorInfo } = checks;
+		// 配置中间件
+		getAuthorInfo = getAuthorInfo.bind(null, { table: Main.TUser});
+		getArticleList = getArticleList.bind(null, { table: Main.TArticle });
 
-		if (!checkResult.error) {
-			result = await Main.TArticle.findAndCount({
-				limit,
-				offset,
-				where: { status: 1 },
-			}).then( data => {
-				if (data) data.pageCount = Math.ceil(data.count / limit);
-				return data;
-			}).catch ( error => { console.log(error); return null; });
-		}
-
-		return { status, ...checkResult, data: result? result : null };
+		const checkResult = await check.with(checkPageId).with(getArticleList).with(getAuthorInfo).end();
+		// 获取处理结果
+		const { status, result } = checkResult;
+		return { status: status || 200, data: result? result: null };
 	},
 
 	async [ methods.GET_ARTICLE_BY_ID.name ] (data) {
