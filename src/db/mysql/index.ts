@@ -4,9 +4,19 @@ const { main: MainConfig} = require('../../../config/').storage;
 
 export const Main = initializeWith(MainConfig);
 
-// Main中得数据表关系定义s
-Main.TUser.hasMany(Main.TArticle, { foreignKey: 'author', targetKey: 'username', as: 'Article' });
+// Main.TArticle.associate(Main);
+// Main.TUser.associate(Main);
+// Main中得数据表关系定义
+// 关系操作完全不行
+// Main.TUser.hasMany(Main.TArticle, { foreignKey: 'author', targetKey: 'username', as: 'Article' });
 // Main.TArticle.belongsTo(Main.TUser, { foreignKey: 'author', as: 'Article'});
+// const conn = connect(MainConfig);
+// export const TUser = conn.import('./models/main/tbl_user');
+// export const TArticle = conn.import('./models/main/tbl_article');
+
+// TArticle.belongsTo(TUser, { as: 'User', foreignKey: 'author', targetKey: 'username' });
+// TUser.hasMany(TArticle, { as: 'Artilce', foreignKey: 'author' });
+
 function initializeWith (config: DBConfig) {
 	const client = connect(config);
 	return syncTables(client);

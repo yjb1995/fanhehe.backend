@@ -1,5 +1,5 @@
 module.exports = function (sequelize, DataTypes) {
-	return sequelize.define('tbl_user', {
+	const TUser = sequelize.define('tbl_user', {
 		id: {
 			type: DataTypes.INTEGER(11),
 			autoIncrement: true,
@@ -45,6 +45,12 @@ module.exports = function (sequelize, DataTypes) {
 	}, {
 		timestamps: false,
 		tableName: 'tbl_user',
-		freezeTableName: true
+		freezeTableName: true,
+		classMethods: {
+			associate: function(models) {
+				TUser.hasMany( models.TArticle, { as: "Article", foreignKey: 'author', targetKey: 'username' });
+			}
+		}
 	});
+	return TUser;
 };

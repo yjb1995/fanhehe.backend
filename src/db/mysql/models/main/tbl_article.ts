@@ -1,5 +1,5 @@
 module.exports = function (sequelize, DataTypes) {
-	return sequelize.define('tbl_article', {
+	const Article = sequelize.define('tbl_article', {
 		id: {
 			type: DataTypes.INTEGER(11),
 			autoIncrement: true,
@@ -35,6 +35,12 @@ module.exports = function (sequelize, DataTypes) {
 		// createAt: 'create_time',
 		// UpdateAt: 'last_modify_time',
 		tableName: 'tbl_article',
-		freezeTableName: true
+		freezeTableName: true,
+		classMethods: {
+			associate: function(models) {
+				Article.belongsTo( models.TUser, { as: "User", foreignKey: 'author', targetKey: 'username' });
+			}
+		}
 	});
+	return Article
 };

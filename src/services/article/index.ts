@@ -12,31 +12,37 @@ export default {
 	 * @returns {}
 	 */
 	async [ methods.GET_ALL.name ] (data) {
+		let result: any = {};
+		const status = 200;
+		// 检查插件
 		const check = new Check(data);
-
 		const { checkPageId } = checks;
 		const checkResult = await check.with(checkPageId).end();
+		// 检查结果
 		const { pageId } = checkResult;
-
+		// 分页: limit and offset
 		const { limit }= methods.GET_ALL;
 		const offset = (pageId - 1) * limit;
-		
-		const result = await Main.TArticle.findAndCount({
-			limit,
-			offset,
-			where: { status: 1 },
-		}).then( data => {
-			if (data) data.pageCount = Math.ceil(data.count / limit);
-			return data;
-		}).catch ( error => { console.log(error); return null; });
 
-		return { status: 1, data: result? result : null };
+		if (!checkResult.error) {
+			result = await Main.TArticle.findAndCount({
+				limit,
+				offset,
+				where: { status: 1 },
+			}).then( data => {
+				if (data) data.pageCount = Math.ceil(data.count / limit);
+				return data;
+			}).catch ( error => { console.log(error); return null; });
+		}
+
+		return { status, ...checkResult, data: result? result : null };
 	},
+
 	async [ methods.GET_ARTICLE_BY_ID.name ] (data) {
 		const status = 200;
 		const { id } = data;
 		const result = await Main.TArticle.findById(id, {}).then( data => data );
-		return { status: 'default', data: result? result: null };
+		return { status, data: result? result: null };
 	},
 	/**
 	 * [type description]
