@@ -20,7 +20,6 @@
   "author": "fanhehe",
   "license": "ISC",
   "dependencies": {
-    "@types/es6-shim": "^0.31.32",
     "es6-promise": "^4.0.5",
     "events": "^1.1.1",
     "fs": "^0.0.1-security",
@@ -40,7 +39,7 @@
     "sequelize": "^3.27.0"
   },
   "devDependencies": {
-    "@types/es6-promise": "^0.0.32",
+    "@types/es6-shim": "^0.31.32",
     "@types/koa": "^2.0.35",
     "@types/node": "^6.0.52",
     "babel-core": "^6.18.2",
