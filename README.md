@@ -1,6 +1,10 @@
 # the Server of Fanhehe with `Koa2`
 
+<<<<<<< HEAD
 This is a server with nodejs for my own [personal page](http://http://115.29.49.204/).
+=======
+This is a server with nodejs for my own [personal page](http://115.29.49.204/).
+>>>>>>> change homepage url
 
 
 - before running, u need start mysql and redis service at your local.
