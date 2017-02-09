@@ -28,7 +28,6 @@
 			"session": {
 				"host": "127.0.0.1",
 				"port": "6379",
-				"username": "",
 				"password": "13889441200",
 				"db": 0
 			}
@@ -63,7 +62,6 @@
 			"session": {
 				"host": "127.0.0.1",
 				"port": "6379",
-				"username": "",
 				"password": "13889441200",
 				"db": 0
 			}
