@@ -15,7 +15,6 @@ export default {
 	 async [ methods.REGISTER_WITH_EMAIL.name ] (ctx, data) {
 	 	let result: any = {};
 	 	const check = new Check(data);
-	 	const { email, nickname } = data;
 
 	 	// 处理状态 
 	 	const { C2_REGISTER_SUCCESS, C5_REGISTER_ERROR, C4_NICKNAME_FORMAT } = types;
@@ -32,9 +31,9 @@ export default {
 	 	// 没有错误
 	 	if (!checkResult.error) {
 	 		// 创建新账号
-	 		result = await Main.TUser.create(data).then(({ id }) => {
-	 			const status = id? C2_REGISTER_SUCCESS: C5_REGISTER_ERROR;
-	 			return { status };
+	 		result = await Main.TUser.create(data).then((data) => {
+	 			const status = data.id? C2_REGISTER_SUCCESS: C5_REGISTER_ERROR;
+	 			return { status, data };
 	 		}).catch(error => error);
 	 		// 写入session
 	 	}
@@ -48,7 +47,6 @@ export default {
 	 async [ methods.REGISTER_WITH_USERNAME.name ] (ctx, data) {
 	 	let result: any = {};
 	 	const check = new Check(data);
-	 	const { email, nickname } = data;
 
 	 	// 处理状态 
 	 	const { C2_REGISTER_SUCCESS, C5_REGISTER_ERROR, C4_NICKNAME_FORMAT } = types;
@@ -65,9 +63,9 @@ export default {
 	 	// 没有错误
 	 	if (!checkResult.error) {
 	 		// 创建新账号
-	 		result = await Main.TUser.create(data).then(({ id }) => {
-	 			const status = id? C2_REGISTER_SUCCESS: C5_REGISTER_ERROR;
-	 			return { status };
+	 		result = await Main.TUser.create(data).then(data => {
+	 			const status = data.id? C2_REGISTER_SUCCESS: C5_REGISTER_ERROR;
+	 			return { status, data };
 	 		}).catch(error => error);
 	 		// 写入session
 	 	}

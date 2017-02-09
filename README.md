@@ -9,6 +9,7 @@ This is a server with nodejs for my own [personal page](https://github.com/fanhe
 ## development flow
 
 * git clone git@github.com/fanhehe/fanhehe.backend && cd fanhehe.backend
+* git submodule update --init
 * cp config/deploy.json config/local.json
 * cnpm install
 * npm run compiler
