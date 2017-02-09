@@ -12,7 +12,8 @@
 		"whiteList": [
 			"http://www.fanhehe.com",
 			"https://www.fanhehe.com",
-            "http://115.29.49.204"
+            "http://115.29.49.204",
+            "http://localhost:3000"
 		],
 		"storage": {
 			"main": {
