@@ -19,14 +19,14 @@
 			"main": {
 				"type": "mysql",
 				"connectionLimit": 200,
-				"host" : "127.0.0.1",
+				"host" : "115.29.49.204",
 				"port" : 3306,
 				"username" : "fanhehe",
 				"password" : "13889441200",
 				"database" : "Main"
 			},
 			"session": {
-				"host": "127.0.0.1",
+				"host": "115.29.49.204",
 				"port": "6379",
 				"password": "13889441200",
 				"db": 0
@@ -60,7 +60,7 @@
 				"database" : "Main"
 			},
 			"session": {
-				"host": "127.0.0.1",
+				"host": "115.29.49.204",
 				"port": "6379",
 				"password": "13889441200",
 				"db": 0
