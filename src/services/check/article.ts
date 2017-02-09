@@ -18,7 +18,6 @@ export function checkId (data) {
 
 	return { ...data, id };
 }
-
 /**
  * [checkPageId description] 分页组件检查pageId, pageId >= 1
  * @param {[type]} data [description] 待检查的数据
@@ -31,6 +30,45 @@ export function checkPageId (data) {
 
 	return { ...data, pageId: id };
 };
+
+/**
+ * [getArticle description] 获取单个文章信息
+ * @param {[type]} options [description]
+ * @param {[type]} data    [description]
+ */
+export async function getArticle (options, data) {
+	const { id } = data;
+	const { table } = options;
+	
+
+	const method = 'findOne';
+	const where  = { id, status: 1 };
+	 // 查询并获取数量 返回 { rows: Object[], count: Number }
+	const selectResult = await select({ table, where, method });
+	// 如果文章不存在
+	if (!selectResult) {}
+	return { ...data, result: selectResult };
+};
+
+/**
+ * [getAuthorInfo description] 根据 获取的文章信息获取相关的作者信息
+ * @param {[type]} options [description]
+ * @param {[type]} data    [description]
+ */
+export async function getAuthorInfo (options, data) {
+	const { table } = options;
+	const { result: article } = data;
+
+	const method = 'findOne';
+	const attributes = ['username', 'preview', 'nickname'];
+
+	const where = { username: article.author };
+	const userInfo = await select({ table, where, method, attributes });
+	if (!userInfo) {}
+	article.dataValues.up = userInfo;
+	return { ...data, result: article };
+}
+
 /**
  * [getArticleList description] 
  * @param {[Object]} options [description]
@@ -44,33 +82,32 @@ export async function getArticleList (options, data) {
 	const where  = { status: 1 };
 	const method = 'findAndCount'; // 查询并获取数量 返回 { rows: Object[], count: Number }
 	const selectResult = await select({ table, where, method, limit, offset });
+	// 如果文章不存在或者文章非数组 则抛错
+	if (!(selectResult && selectResult.rows instanceof Array)) throw { status: types.C5_BAD_GATEWAY };
 	// 分页换算
 	selectResult.count = Math.ceil( selectResult.count / limit);
 	return { ...data, result: selectResult };
 };
-
 /**
- * [getAuthorInfo description] 根据 获取的文章信息获取相关的作者信息
+ * [getAuthorsInfo description] 根据 获取的文章列表信息获取相关的作者信息
  * @param {[Object]} options [description] 
  * @param {[Object]} data    [description]
  */
-export async function getAuthorInfo (options, data) {
-	const { result: articles } = data;
+export async function getAuthorsInfo (options, data) {
 	const { table } = options;
+	const { result: articles } = data;
+	
 	const method = 'findAll';
 	const attributes = ['username', 'preview', 'nickname'];
-	// 如果文章不存在或者文章非数组 则抛错
-	if (!(articles && articles.rows instanceof Array)) throw { status: types.C5_BAD_GATEWAY };
 	// 获取所有选出的文章的作者-用户名并去重
 	let userList = articles.rows.map(row => row.author);
 	userList = Array.from(new Set(userList));
 
-	const where = { username: userList, status: 1}
+	const where = { username: userList, status: 1 };
 	const users = await select({table, where, method, attributes});
 	// 如果根据文章获取的作者信息非数组则抛错。
 	if (!(users instanceof Array)) throw { status: types.C4_USERNAME_FORMAT};
 	// 重组信息
-
 	articles.rows = articles.rows.map(row => {
 		row.dataValues.up = users.filter((user, index)=> user.username ===  row.author)[0] || {};
 		return row;

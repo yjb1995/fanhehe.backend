@@ -15,22 +15,31 @@ export default {
 		const { limit } = methods.GET_ALL;
 		// 引入及初始化检查插件
 		const check = new Check({ ...data, limit});
-		let { checkPageId, getArticleList, getAuthorInfo } = checks;
+		let { checkPageId, getArticleList, getAuthorsInfo } = checks;
 		// 配置中间件
-		getAuthorInfo = getAuthorInfo.bind(null, { table: Main.TUser});
+		getAuthorsInfo = getAuthorsInfo.bind(null, { table: Main.TUser});
 		getArticleList = getArticleList.bind(null, { table: Main.TArticle });
 
-		const checkResult = await check.with(checkPageId).with(getArticleList).with(getAuthorInfo).end();
+		const checkResult = await check.with(checkPageId).with(getArticleList).with(getAuthorsInfo).end();
 		// 获取处理结果
 		const { status, result } = checkResult;
 		return { status: status || 200, data: result? result: null };
 	},
 
 	async [ methods.GET_ARTICLE_BY_ID.name ] (data) {
-		const status = 200;
 		const { id } = data;
-		const result = await Main.TArticle.findById(id, {}).then( data => data );
-		return { status, data: result? result: null };
+		const check = new Check(data);
+		let { checkId, getAuthorInfo, getArticle } = checks;
+
+		// 配置中间件
+		getArticle = getArticle.bind(null, { table: Main.TArticle });
+		getAuthorInfo = getAuthorInfo.bind(null, { table: Main.TUser});
+
+		const checkResult = await check.with(checkId).with(getArticle).with(getAuthorInfo).end();
+		// 获取处理结果
+		const { status, result } = checkResult;
+		return { status: status || 200, data: result? result: null };
+
 	},
 	/**
 	 * [type description]
