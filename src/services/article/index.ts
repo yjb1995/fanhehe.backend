@@ -15,12 +15,13 @@ export default {
 		const { limit } = methods.GET_ALL;
 		// 引入及初始化检查插件
 		const check = new Check({ ...data, limit});
-		let { checkPageId, getArticleList, getAuthorsInfo } = checks;
+		let { checkPageId, getArticles, getAuthorsInfo } = checks;
 		// 配置中间件
+		getArticles = getArticles.bind(null, { table: Main.TArticle });
 		getAuthorsInfo = getAuthorsInfo.bind(null, { table: Main.TUser});
-		getArticleList = getArticleList.bind(null, { table: Main.TArticle });
+		
 
-		const checkResult = await check.with(checkPageId).with(getArticleList).with(getAuthorsInfo).end();
+		const checkResult = await check.with(checkPageId).with(getArticles).with(getAuthorsInfo).end();
 		// 获取处理结果
 		const { status, result } = checkResult;
 		return { status: status || 200, data: result? result: null };
@@ -29,13 +30,17 @@ export default {
 	async [ methods.GET_ARTICLE_BY_ID.name ] (data) {
 		const { id } = data;
 		const check = new Check(data);
-		let { checkId, getAuthorInfo, getArticle } = checks;
+		let { checkId, getArticleAuthor, getArticle, getCommentsAuthor, getArticleComments } = checks;
 
 		// 配置中间件
 		getArticle = getArticle.bind(null, { table: Main.TArticle });
-		getAuthorInfo = getAuthorInfo.bind(null, { table: Main.TUser});
+		getArticleAuthor = getArticleAuthor.bind(null, { table: Main.TUser});
+		getCommentsAuthor = getCommentsAuthor.bind(null, { table: Main.TUser });
+		getArticleComments = getArticleComments.bind(null, { table: Main.TArticleComments });
 
-		const checkResult = await check.with(checkId).with(getArticle).with(getAuthorInfo).end();
+		const checkResult = await check.with(checkId)
+			.with(getArticle).with(getArticleAuthor)
+			.with(getArticleComments).with(getCommentsAuthor).end();
 		// 获取处理结果
 		const { status, result } = checkResult;
 		return { status: status || 200, data: result? result: null };
@@ -46,10 +51,15 @@ export default {
 	 * @type {[type]}
 	 */
 	async [ methods.GET_ALL_BY_TYPE.name] (data) {
-		const status = 200;
 		const { type } = data;
 		const result = await Main.TArticle.findAll({ where: { type } }).then( data => data);
 
-		return { status, data: result? result: null };
+		return { status: 200, data: result? result: null };
+	},
+	async [ methods.CREATE_COMMENT.name ] (data) {
+		return { status: 200, data: null };
+	},
+	async [ methods.DELETE_COMMENT.name ] (data) {
+		return { status: 200, data: null };
 	},
 };

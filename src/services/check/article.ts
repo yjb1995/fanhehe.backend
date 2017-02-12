@@ -7,7 +7,7 @@
 import * as types from '../../utils/resConfig';
 import { article } from '../../common/constants/request';
 /**
- * [checkId description] 检查id, id >= 0 
+ * [checkId 检查id, id应该大于零 ] 
  * @param {[type]} data [description] 待检查的数据
  */
 export function checkId (data) {
@@ -19,8 +19,8 @@ export function checkId (data) {
 	return { ...data, id };
 }
 /**
- * [checkPageId description] 分页组件检查pageId, pageId >= 1
- * @param {[type]} data [description] 待检查的数据
+ * [checkPageId 分页组件检查pageId, pageId大于一]
+ * @param {[Object]} data [description] 待检查的数据
  */
 export function checkPageId (data) {
 	let { pageId: id } = data;
@@ -32,30 +32,29 @@ export function checkPageId (data) {
 };
 
 /**
- * [getArticle description] 获取单个文章信息
+ * [getArticle 获取单个文章信息]
  * @param {[type]} options [description]
- * @param {[type]} data    [description]
+ * @param {`type]} data    [description]
  */
 export async function getArticle (options, data) {
 	const { id } = data;
 	const { table } = options;
 	
-
 	const method = 'findOne';
 	const where  = { id, status: 1 };
 	 // 查询并获取数量 返回 { rows: Object[], count: Number }
-	const selectResult = await select({ table, where, method });
+	const article = await select({ table, where, method });
 	// 如果文章不存在
-	if (!selectResult) {}
-	return { ...data, result: selectResult };
+	if (!article) {}
+	return { ...data, result: article };
 };
 
 /**
- * [getAuthorInfo description] 根据 获取的文章信息获取相关的作者信息
+ * [getAuthorInfo 获取的文章信息获取相关的作者信息]
  * @param {[type]} options [description]
  * @param {[type]} data    [description]
  */
-export async function getAuthorInfo (options, data) {
+export async function getArticleAuthor (options, data) {
 	const { table } = options;
 	const { result: article } = data;
 
@@ -64,8 +63,77 @@ export async function getAuthorInfo (options, data) {
 
 	const where = { username: article.author };
 	const userInfo = await select({ table, where, method, attributes });
+
 	if (!userInfo) {}
 	article.dataValues.up = userInfo;
+	return { ...data };
+}
+/**
+ * [getArticleComments description]
+ * @param {[type]} options [description]
+ * @param {[type]} data    [description]
+ */
+export async function getArticleComments (options, data) {
+
+	const { table } = options;
+	const { result: article } = data;
+	// 查询数据库选项
+	const method = 'findAndCount';
+	const where = { article_id: article.id };
+	const comments = await select({ table, method, where });
+	// 将评论加到文章之上
+	article.dataValues.comments = comments;
+	return { ...data };
+}
+/**
+ * [getCommentsAuthor 获取评论的作者]
+ * @param {[type]} options [description]
+ * @param {[type]} data    [description]
+ */
+export async function getCommentsAuthor (options, data) {
+	const { result } = data;
+	const { table } = options;
+	// console.log(1, result.dataValues.comments);
+	const comments = result.dataValues.comments? result.dataValues.comments: result;
+	// 查询数据库选项
+	const method = 'findAll';
+	const where = { username: comments.rows.map( comment => comment.username ) };
+	const users = await select({ table, method, where });
+	comments.rows = comments.rows.map(row => {
+		row.dataValues.up = users.filter(user => user.username ===  row.username)[0] || {};
+		return row;
+	});
+	return { ...data };
+}
+
+/**
+ * [getComments 获取相关文章的评论]
+ * @param 
+ */
+export async function getComments (options, data) {
+	const { table } = options;
+	const { result: article } = data;
+	// 查询数据库选项
+	const method = 'findAndCount';
+	const where = { article_id: article.id };
+	const comments = await select({ table, method, where });
+	// 将评论加到文章之上
+	article.dataValues.comments = comments;
+	return { ...data, result: article };		
+}
+/**
+ * [getChildComments 获得相关文章评论的子评论] 
+ * @param {[Object]} options [获取相关信息] 
+ * @param {[Object]} data    [description]
+ */
+export async function getChildComments (options, data) {
+	const { table } = options;
+	const { result: article } = data;
+	// 查询数据库选项
+	const method = 'findAndCount';
+	const where = { parent_id: article.id };
+	const comments = await select({ table, method, where, });
+	article.dataValues.comments = comments;
 	return { ...data, result: article };
 }
 
@@ -74,7 +142,7 @@ export async function getAuthorInfo (options, data) {
  * @param {[Object]} options [description]
  * @param {[Object]} data [description]
  */
-export async function getArticleList (options, data) {
+export async function getArticles (options, data) {
 	const { table } = options;
 	const { pageId, limit } = data;
 	const offset = (pageId - 1) * limit;
@@ -115,7 +183,6 @@ export async function getAuthorsInfo (options, data) {
 	return { ...data, result: articles };
 };
 
-
 // 一下为每个check文件都可复用的函数
 
 /**
@@ -123,7 +190,7 @@ export async function getAuthorsInfo (options, data) {
  * @param {string; }} options       [description]
  * @param {[type]}     data [description]
  */
-export const select = async (options: { table: any; method: string; where: any; attributes?: any; limit?: number; offset?: number; order?: any[]; }) => {
+export const select = async (options: { table: any; method: string; where?: any; attributes?: any; limit?: number; offset?: number; order?: any[]; }) => {
 	const { method } = options;
 	const Table = options.table;
 	
