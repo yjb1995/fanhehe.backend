@@ -53,7 +53,6 @@ export default {
 	async [ methods.GET_ALL_BY_TYPE.name] (data) {
 		const { type } = data;
 		const result = await Main.TArticle.findAll({ where: { type } }).then( data => data);
-
 		return { status: 200, data: result? result: null };
 	},
 	async [ methods.CREATE_COMMENT.name ] (data) {
@@ -62,4 +61,11 @@ export default {
 	async [ methods.DELETE_COMMENT.name ] (data) {
 		return { status: 200, data: null };
 	},
+	async [ methods.CREATE_COMMENT.name ] (data) {
+		return { status: 200, data: null };
+	},
+	async [ methods.DELETE_COMMENT.name ] (data) {
+		return { status: 200, data: null };
+	},
+
 };

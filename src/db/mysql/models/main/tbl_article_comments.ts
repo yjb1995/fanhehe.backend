@@ -8,20 +8,24 @@ module.exports = function (sequelize, DataTypes) {
 		username: {
 			type: DataTypes.STRING(40),
 		},
-		reply_to: {
+		replyTo: {
 			type: DataTypes.STRING(40),
+			field: 'reply_to',
 		},
-		article_id: {
+		articleId: {
 			type: DataTypes.INTEGER(11),
+			field: 'article_id',
 		},
-		parent_id: {
+		parentId: {
 			type: DataTypes.INTEGER(11),
+			field: 'parent_id',
 		},
 		content: {
 			type: DataTypes.TEXT,
 		},
-		create_time: {
+		createTime: {
 			type: DataTypes.DATE,
+			field: 'create_time',
 		},
 		status: {
 			type: DataTypes.INTEGER(1),

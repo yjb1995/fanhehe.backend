@@ -19,11 +19,13 @@ module.exports = function (sequelize, DataTypes) {
 		content: {
 			type: DataTypes.TEXT,
 		},
-		create_time: {
+		createTime: {
 			type: DataTypes.DATE,
+			field: 'create_time',
 		},
-		last_modify_time: {
+		lastModifyTime: {
 			type: DataTypes.DATE,
+			field: 'last_modify_time',
 		},
 		status: {
 			type: DataTypes.INTEGER(1),

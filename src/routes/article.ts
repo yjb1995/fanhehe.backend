@@ -24,16 +24,22 @@ router.get(article.GET_ARTICLE_BY_ID.path, async (ctx, next) => {
 });
 
 router.post(article.CREATE_COMMENT.path, async (ctx, next) => {
-	const { articleId } = ctx.params;
-	const { } = ctx.body;
+	const { username, articleId, content, parentId, replyTo } = ctx.body;
 	const { status, data } = await Article[ article.CREATE_COMMENT.name ] ({ articleId });
 	return ctx.body = resConfig(status, data);
 });
 
 router.delete(article.DELETE_COMMENT.path, async (ctx, body) => {
-	const { articleId } = ctx.params;
+	const { articleId } = ctx.query;
 	const { } = ctx.body;
 	const { status, data } = await Article[ article.DELETE_COMMENT.name ] ({ articleId });
 	return ctx.body = resConfig(status, data);
 });
+
+router.get(article.GET_COMMENTS.path, async (ctx, body) => {
+	const { pageId, articleId } = ctx.query;
+	const { status, data } = await Article[ article.GET_COMMENTS.name ] ({ pageId, articleId});
+	return ctx.body = resConfig( status, data);
+});
+
 export default router;

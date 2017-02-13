@@ -74,15 +74,16 @@ export async function getArticleAuthor (options, data) {
  * @param {[type]} data    [description]
  */
 export async function getArticleComments (options, data) {
-
+	const { result } = data;
 	const { table } = options;
-	const { result: article } = data;
+	const { limit } = article.GET_COMMENTS;
 	// 查询数据库选项
 	const method = 'findAndCount';
-	const where = { article_id: article.id };
-	const comments = await select({ table, method, where });
+	const where = { article_id: result.id };
+	const comments = await select({ table, method, where, limit });
 	// 将评论加到文章之上
-	article.dataValues.comments = comments;
+	comments.pages = Math.ceil( comments.count / limit );
+	result.dataValues.comments = comments;
 	return { ...data };
 }
 /**
@@ -97,8 +98,9 @@ export async function getCommentsAuthor (options, data) {
 	const comments = result.dataValues.comments? result.dataValues.comments: result;
 	// 查询数据库选项
 	const method = 'findAll';
+	const attributes = ['username', 'nickname', 'preview'];
 	const where = { username: comments.rows.map( comment => comment.username ) };
-	const users = await select({ table, method, where });
+	const users = await select({ table, method, where, attributes});
 	comments.rows = comments.rows.map(row => {
 		row.dataValues.up = users.filter(user => user.username ===  row.username)[0] || {};
 		return row;
