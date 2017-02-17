@@ -26,25 +26,22 @@ export default {
 		const { status, result } = checkResult;
 		return { status: status || 200, data: result? result: null };
 	},
-
+	/**
+	 * 根据文章ID 获取文章内容及作者信息
+	 */
 	async [ methods.GET_ARTICLE_BY_ID.name ] (data) {
 		const { id } = data;
 		const check = new Check(data);
-		let { checkId, getArticleAuthor, getArticle, getCommentsAuthor, getArticleComments } = checks;
+		let { checkId, getArticle, getArticleAuthor } = checks;
 
 		// 配置中间件
 		getArticle = getArticle.bind(null, { table: Main.TArticle });
 		getArticleAuthor = getArticleAuthor.bind(null, { table: Main.TUser});
-		getCommentsAuthor = getCommentsAuthor.bind(null, { table: Main.TUser });
-		getArticleComments = getArticleComments.bind(null, { table: Main.TArticleComments });
-
-		const checkResult = await check.with(checkId)
-			.with(getArticle).with(getArticleAuthor)
-			.with(getArticleComments).with(getCommentsAuthor).end();
+		// main处理
+		const checkResult = await check.with(checkId).with(getArticle).with(getArticleAuthor).end();
 		// 获取处理结果
 		const { status, result } = checkResult;
 		return { status: status || 200, data: result? result: null };
-
 	},
 	/**
 	 * [type description]
@@ -56,16 +53,24 @@ export default {
 		return { status: 200, data: result? result: null };
 	},
 	async [ methods.CREATE_COMMENT.name ] (data) {
+		const check = new Check(data);
+		
 		return { status: 200, data: null };
 	},
 	async [ methods.DELETE_COMMENT.name ] (data) {
 		return { status: 200, data: null };
 	},
-	async [ methods.CREATE_COMMENT.name ] (data) {
-		return { status: 200, data: null };
+	async [ methods.GET_COMMENTS.name ] (data) {
+		const { id } = data;
+		const check = new Check(data);
+		let { checkId, checkPageId, getComments, getChildComments } = checks;
+		// 配置中间件
+		getComments = getComments.bind(null, { table: Main.TArticleComments });
+		getChildComments = getChildComments.bind(null, { table: Main.TArticleComments });
+		// main处理
+		const checkResult = await check.with(checkId).with(checkPageId).with(getComments).with(getChildComments).end();
+		// 获取处理结果
+		const { status, result } = checkResult;
+		return { status: status || 200, data: result? result: null };
 	},
-	async [ methods.DELETE_COMMENT.name ] (data) {
-		return { status: 200, data: null };
-	},
-
 };

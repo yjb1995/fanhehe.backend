@@ -69,22 +69,35 @@ export async function getArticleAuthor (options, data) {
 	return { ...data };
 }
 /**
- * [getArticleComments description]
- * @param {[type]} options [description]
- * @param {[type]} data    [description]
+ * [getComments 获取相关文章的评论]
+ * @param 
  */
-export async function getArticleComments (options, data) {
-	const { result } = data;
+export async function getComments (options, data) {
+	const { id, pageId } = data;
 	const { table } = options;
-	const { limit } = article.GET_COMMENTS;
 	// 查询数据库选项
 	const method = 'findAndCount';
-	const where = { article_id: result.id };
-	const comments = await select({ table, method, where, limit });
-	// 将评论加到文章之上
-	comments.pages = Math.ceil( comments.count / limit );
-	result.dataValues.comments = comments;
-	return { ...data };
+	const where = { article_id: id };
+	const { limit } = article.GET_COMMENTS;
+	const offset = limit * pageId;
+	// 查询数据库
+	const comments = await select({ table, method, where, limit, offset });
+	return { ...data, comments };
+}
+/**
+ * [getChildComments 获得相关文章评论的子评论] 
+ * @param {[Object]} options [获取相关信息] 
+ * @param {[Object]} data    [description]
+ */
+export async function getChildComments (options, data) {
+	const { table } = options;
+	const { id, pageId, comments } = data;
+	// 查询数据库选项
+	const parentIds = comments.rows.map( row => row.parentId );
+	const method = 'findAndCount';
+	const where = { parentId: parentIds };
+	const childComments = await select({ table, method, where, });
+	return { ...data, childComments };
 }
 /**
  * [getCommentsAuthor 获取评论的作者]
@@ -92,10 +105,8 @@ export async function getArticleComments (options, data) {
  * @param {[type]} data    [description]
  */
 export async function getCommentsAuthor (options, data) {
-	const { result } = data;
 	const { table } = options;
-	// console.log(1, result.dataValues.comments);
-	const comments = result.dataValues.comments? result.dataValues.comments: result;
+	const { comments, childComments } = data;
 	// 查询数据库选项
 	const method = 'findAll';
 	const attributes = ['username', 'nickname', 'preview'];
@@ -107,40 +118,8 @@ export async function getCommentsAuthor (options, data) {
 	});
 	return { ...data };
 }
-
 /**
- * [getComments 获取相关文章的评论]
- * @param 
- */
-export async function getComments (options, data) {
-	const { table } = options;
-	const { result: article } = data;
-	// 查询数据库选项
-	const method = 'findAndCount';
-	const where = { article_id: article.id };
-	const comments = await select({ table, method, where });
-	// 将评论加到文章之上
-	article.dataValues.comments = comments;
-	return { ...data, result: article };		
-}
-/**
- * [getChildComments 获得相关文章评论的子评论] 
- * @param {[Object]} options [获取相关信息] 
- * @param {[Object]} data    [description]
- */
-export async function getChildComments (options, data) {
-	const { table } = options;
-	const { result: article } = data;
-	// 查询数据库选项
-	const method = 'findAndCount';
-	const where = { parent_id: article.id };
-	const comments = await select({ table, method, where, });
-	article.dataValues.comments = comments;
-	return { ...data, result: article };
-}
-
-/**
- * [getArticleList description] 
+ * [getArticleList 获取文章列表] 
  * @param {[Object]} options [description]
  * @param {[Object]} data [description]
  */
@@ -159,7 +138,7 @@ export async function getArticles (options, data) {
 	return { ...data, result: selectResult };
 };
 /**
- * [getAuthorsInfo description] 根据 获取的文章列表信息获取相关的作者信息
+ * [getAuthorsInfo 根据 获取的文章列表信息获取相关的作者信息] 
  * @param {[Object]} options [description] 
  * @param {[Object]} data    [description]
  */
@@ -196,7 +175,6 @@ export const select = async (options: { table: any; method: string; where?: any;
 	const { method } = options;
 	const Table = options.table;
 	
-
 	// 初始化
 	delete options.table;
 	delete options.method;
