@@ -34,6 +34,7 @@ export const C2_OK = 'C2_OK';
 export const C2_LOGIN_SUCCESS = 'C2_LOGIN_SUCCESS'; // 用户登陆成功
 export const C2_LOGOUT_SUCCESS= 'C2_LOGOUT_SUCCESS';// 用户注销成功
 export const C2_REGISTER_SUCCESS = 'C2_REGISTER_SUCCESS'; //注册成功
+export const C2_ARTICLE_NO_COMMENTS = 'C2_ARTICLE_NO_COMMENTS'; //无评论
 // 3
 export const C3_NOT_MODIFED = 'C3_NOT_MODIFED';
 // 4
@@ -98,6 +99,13 @@ const resList = {
 			zh_cn: '退出成功',
 			en_us: ''
 		},
+	},
+	[C2_ARTICLE_NO_COMMENTS]: {
+		code: 2001,
+		message: {
+			zh_cn: '该文章无评论',
+			en_us: ''
+		}
 	},
 	[C4_NOT_FOUND]: {
 		code: 404,

@@ -7,16 +7,16 @@
 import * as types from '../../utils/resConfig';
 import { article } from '../../common/constants/request';
 /**
- * [checkId 检查id, id应该大于零 ] 
+ * [checkId 检查文章id,articleId应该大于零 ] 
  * @param {[type]} data [description] 待检查的数据
  */
-export function checkId (data) {
-	let { id } = data;
+export function checkArticleId (data) {
+	let { articleId: id } = data;
 	id = id && id > 0? +id: null;
 
 	if (typeof id !== 'number' || isNaN(id)) throw { status: types.C4_ID_TYPE_ERROR };
 
-	return { ...data, id };
+	return { ...data, articleId: id };
 }
 /**
  * [checkPageId 分页组件检查pageId, pageId大于一]
@@ -37,8 +37,8 @@ export function checkPageId (data) {
  * @param {`type]} data    [description]
  */
 export async function getArticle (options, data) {
-	const { id } = data;
 	const { table } = options;
+	const { articleId: id } = data;
 	
 	const method = 'findOne';
 	const where  = { id, status: 1 };
@@ -73,15 +73,17 @@ export async function getArticleAuthor (options, data) {
  * @param 
  */
 export async function getComments (options, data) {
-	const { id, pageId } = data;
+	
 	const { table } = options;
+	const { articleId, pageId } = data;
 	// 查询数据库选项
 	const method = 'findAndCount';
-	const where = { article_id: id };
+	const where = { articleId, parentId: null };
 	const { limit } = article.GET_COMMENTS;
-	const offset = limit * pageId;
+	const offset = limit * (pageId -1);
 	// 查询数据库
 	const comments = await select({ table, method, where, limit, offset });
+	if (!(comments && comments.rows.length)) throw { status: types.C2_ARTICLE_NO_COMMENTS };
 	return { ...data, comments };
 }
 /**
@@ -90,13 +92,19 @@ export async function getComments (options, data) {
  * @param {[Object]} data    [description]
  */
 export async function getChildComments (options, data) {
+	let childComments = [];
 	const { table } = options;
-	const { id, pageId, comments } = data;
+	const { articleId, pageId, comments } = data;
+	const parentIds = comments.rows.map( row => row.id );
 	// 查询数据库选项
-	const parentIds = comments.rows.map( row => row.parentId );
 	const method = 'findAndCount';
-	const where = { parentId: parentIds };
-	const childComments = await select({ table, method, where, });
+	const { limit } = article.GET_CHILD_COMMETNS;
+	const offset = 0;
+	// 获取所有的
+	for (const parentId of parentIds) {
+		const comment = await select({ table, method, where: { parentId, articleId }, limit, offset });
+		if (comment && comment.rows && comment.rows.length) childComments.push(comment);
+	}
 	return { ...data, childComments };
 }
 /**
@@ -105,18 +113,45 @@ export async function getChildComments (options, data) {
  * @param {[type]} data    [description]
  */
 export async function getCommentsAuthor (options, data) {
+	let usernames = [];
 	const { table } = options;
 	const { comments, childComments } = data;
+
+	// 从评论中获取用户名
+	comments.rows.map(comment => usernames.push(comment.username));
+	childComments.map(item => item.rows.map(comment => usernames.push(comment.username)));
+
+	// usernames 去重
+	usernames = Array.from(new Set(usernames));
 	// 查询数据库选项
 	const method = 'findAll';
 	const attributes = ['username', 'nickname', 'preview'];
-	const where = { username: comments.rows.map( comment => comment.username ) };
+	const where = { username: usernames };
 	const users = await select({ table, method, where, attributes});
-	comments.rows = comments.rows.map(row => {
-		row.dataValues.up = users.filter(user => user.username ===  row.username)[0] || {};
-		return row;
-	});
-	return { ...data };
+
+	return { ...data, usernames: users };
+}
+/**
+ * [combineComments 将评论与up信息组合]
+ * @param {[type]} data [获取到的data数据]
+ */
+export async function combineComments (data) {
+	let { childComments } = data;
+	const { comments, usernames } = data;
+	// 为每个子评论添加发布者信息
+	for (const item of childComments) {
+		for (const row of item.rows) {
+			row.dataValues.up = usernames.filter(user => user.username ===  row.username)[0] || {};
+		}
+	}
+	// 为每个评论添加发布者信息
+	for (const comment of comments.rows) {
+		// 为每个评论添加发布者信息
+		comment.dataValues.up = usernames.filter(user => user.username ===  comment.username)[0];
+		// 为每个评论添加子评论
+		comment.dataValues.subComments  = childComments.filter(item => item.rows[0] && comment.id === item.rows[0].parentId)[0] || undefined;
+	}
+	return { result: comments };
 }
 /**
  * [getArticleList 获取文章列表] 

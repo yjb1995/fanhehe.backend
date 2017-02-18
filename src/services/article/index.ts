@@ -30,15 +30,13 @@ export default {
 	 * 根据文章ID 获取文章内容及作者信息
 	 */
 	async [ methods.GET_ARTICLE_BY_ID.name ] (data) {
-		const { id } = data;
 		const check = new Check(data);
-		let { checkId, getArticle, getArticleAuthor } = checks;
-
+		let { checkArticleId, getArticle, getArticleAuthor } = checks;
 		// 配置中间件
 		getArticle = getArticle.bind(null, { table: Main.TArticle });
-		getArticleAuthor = getArticleAuthor.bind(null, { table: Main.TUser});
+		getArticleAuthor = getArticleAuthor.bind(null, { table: Main.TUser });
 		// main处理
-		const checkResult = await check.with(checkId).with(getArticle).with(getArticleAuthor).end();
+		const checkResult = await check.with(checkArticleId).with(getArticle).with(getArticleAuthor).end();
 		// 获取处理结果
 		const { status, result } = checkResult;
 		return { status: status || 200, data: result? result: null };
@@ -61,14 +59,15 @@ export default {
 		return { status: 200, data: null };
 	},
 	async [ methods.GET_COMMENTS.name ] (data) {
-		const { id } = data;
 		const check = new Check(data);
-		let { checkId, checkPageId, getComments, getChildComments } = checks;
+		let { checkArticleId, checkPageId, getComments, getChildComments, getCommentsAuthor, combineComments } = checks;
 		// 配置中间件
 		getComments = getComments.bind(null, { table: Main.TArticleComments });
+		getCommentsAuthor = getCommentsAuthor.bind(null, { table: Main.TUser });
 		getChildComments = getChildComments.bind(null, { table: Main.TArticleComments });
 		// main处理
-		const checkResult = await check.with(checkId).with(checkPageId).with(getComments).with(getChildComments).end();
+		const checkResult = await check.with(checkArticleId).with(checkPageId)
+			.with(getComments).with(getChildComments).with(getCommentsAuthor).with(combineComments).end();
 		// 获取处理结果
 		const { status, result } = checkResult;
 		return { status: status || 200, data: result? result: null };
