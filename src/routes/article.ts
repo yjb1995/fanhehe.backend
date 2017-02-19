@@ -24,7 +24,7 @@ router.get(article.GET_ARTICLE_BY_ID.path, async (ctx, next) => {
 });
 
 router.post(article.CREATE_COMMENT.path, async (ctx, next) => {
-	const { username, articleId, content, parentId, replyTo } = ctx.body;
+	const { username, articleId, content, parentId, replyTo } = ctx.request.body;
 	const { status, data } = await Article[ article.CREATE_COMMENT.name ] ({ username, articleId, content, parentId, replyTo });
 	return ctx.body = resConfig(status, data);
 });

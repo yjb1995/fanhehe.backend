@@ -3,6 +3,10 @@
  * 一般规定最后一个参数为待测数据，而之前的参数为附加配置的参数。
  * 禁止从外部获取数据。
  */
+/**
+ * 总览
+ * pageCount: 所有关于分页的数据，页数统计后存于pageCount变量。
+ */
 
 import * as types from '../../utils/resConfig';
 import { article } from '../../common/constants/request';
@@ -138,12 +142,20 @@ export async function getCommentsAuthor (options, data) {
 export async function combineComments (data) {
 	let { childComments } = data;
 	const { comments, usernames } = data;
+	const { limit: commentLimit } = article.GET_COMMENTS;
+	const { limit: childCommentsLimit } = article.GET_CHILD_COMMETNS;
 	// 为每个子评论添加发布者信息
 	for (const item of childComments) {
+		// 子评论分页
+		item.limit = childCommentsLimit;
+		item.pageCount = Math.ceil(item.count / childCommentsLimit);
+		//子评论添加发布者信息
 		for (const row of item.rows) {
 			row.dataValues.up = usernames.filter(user => user.username ===  row.username)[0] || {};
 		}
 	}
+	//评论分页
+	comments.pageCount = Math.ceil(comments.count / commentLimit);
 	// 为每个评论添加发布者信息
 	for (const comment of comments.rows) {
 		// 为每个评论添加发布者信息
@@ -169,7 +181,7 @@ export async function getArticles (options, data) {
 	// 如果文章不存在或者文章非数组 则抛错
 	if (!(selectResult && selectResult.rows instanceof Array)) throw { status: types.C5_BAD_GATEWAY };
 	// 分页换算
-	selectResult.count = Math.ceil( selectResult.count / limit);
+	selectResult.pageCount = Math.ceil( selectResult.count / limit);
 	return { ...data, result: selectResult };
 };
 /**

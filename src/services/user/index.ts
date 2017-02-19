@@ -115,8 +115,8 @@ export default {
 	 	// 没有错误
 	 	if ( !checkResult.error ) {
 	 		result.status = types.C2_LOGIN_SUCCESS;
-	 		const { id, username, nickname } = checkResult.data;
-	 		ctx.session = { id, username, nickname };
+	 		const { id, username, nickname, preview } = checkResult.data;
+	 		ctx.session = { id, username, nickname, preview };
 	 	}
 	 	return { ...checkResult, ...result };
 	 },

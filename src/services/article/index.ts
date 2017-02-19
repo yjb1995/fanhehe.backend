@@ -52,8 +52,9 @@ export default {
 	},
 	async [ methods.CREATE_COMMENT.name ] (data) {
 		const check = new Check(data);
-		
-		return { status: 200, data: null };
+		const result = await Main.TArticleComments.create(data).then(result => result);
+		console.log(result, 'xxxxx');
+		return { status: 200, data: result };
 	},
 	async [ methods.DELETE_COMMENT.name ] (data) {
 		return { status: 200, data: null };
