@@ -92,7 +92,7 @@ export async function checkUserInfo (options: { table: any }, data) {
 	// attributes
 	const attributes = [...Attr.default, ...Attr.master];
 	const result = await Table.find({ where, attributes })
-							.then( data => data? data.dataValues: {})
+							.then( data => data ? data.dataValues : {})
 							.catch( error => { console.log(error); return {} });
 
 	if (!result.id) throw { status: types.C4_ACCOUNT_NOT_EXIST };
@@ -100,7 +100,7 @@ export async function checkUserInfo (options: { table: any }, data) {
 	// 去掉密码信息
 	delete result.password;
 	// 返回信息
-	return { ...data, data: { ...result,  } };
+	return { ...data, data: { ...result } };
 }
 /**
  * [singleOnly [单项] 检测数据库数据唯一性]

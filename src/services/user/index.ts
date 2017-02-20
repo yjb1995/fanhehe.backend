@@ -107,16 +107,17 @@ export default {
 	 	const result: any  = {};
 	 	const check  = new Check (data);
 	 	// 中间件
-	 	const { checkUserInfo, shouldNotLogin, checkUsername, checkPassword } = checks;
-	 	// 用户是否已登录中间件 
-	 	const checkUser = checkUserInfo.bind(null, { table: Main.TUser });
+	 	let { checkUserInfo } = checks;
+	 	const { shouldNotLogin, checkUsername, checkPassword } = checks;
+	 	// 配置中间件
+	 	checkUserInfo = checkUserInfo.bind(null, { table: Main.TUser });
 
-	 	const checkResult = await check.with(shouldNotLogin).with(checkUsername).with(checkPassword).with(checkUser).end();
+	 	const checkResult = await check.with(shouldNotLogin).with(checkUsername).with(checkPassword).with(checkUserInfo).end();
 	 	// 没有错误
 	 	if ( !checkResult.error ) {
 	 		result.status = types.C2_LOGIN_SUCCESS;
-	 		const { id, username, nickname, preview } = checkResult.data;
-	 		ctx.session = { id, username, nickname, preview };
+	 		const { id, username, nickname } = checkResult.data;
+	 		ctx.session = { id, username, nickname };
 	 	}
 	 	return { ...checkResult, ...result };
 	 },

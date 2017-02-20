@@ -54,7 +54,6 @@ class RedisStore extends Store{
 
 	async destroy (sid) {
 		const prefix = this.prefix;
-		console.log(`${prefix}${sid}`, 'xxxxxx');
 		return await this.redis.del(`${prefix}${sid}`);
 	};
 };
