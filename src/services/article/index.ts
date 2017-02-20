@@ -53,10 +53,14 @@ export default {
 	async [ methods.CREATE_COMMENT.name ] (data) {
 		const check = new Check(data);
 		const { username, nickname, preview } = data;
-		const up = { username, nickname, preview };
-		const result = await Main.TArticleComments.create(data).then(result => result);
-		result.dataValues.up = up;
-		return { status: 200, data: result };
+		let { createComment } = checks;
+		const table = Main.TArticleComments;
+		// 配置中间件
+		createComment = createComment.bind(null, { table });
+		// 执行
+		const checkResult = await check.with(createComment).end();
+		const { status, result } = checkResult;
+		return { status: status || 200, data: result };
 	},
 	async [ methods.DELETE_COMMENT.name ] (data) {
 		return { status: 200, data: null };

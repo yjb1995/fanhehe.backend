@@ -82,11 +82,13 @@ export async function getComments (options, data) {
 	const { articleId, pageId } = data;
 	// 查询数据库选项
 	const method = 'findAndCount';
+	const order = 'create_time DESC';
 	const where = { articleId, parentId: null };
 	const { limit } = article.GET_COMMENTS;
 	const offset = limit * (pageId -1);
+
 	// 查询数据库
-	const comments = await select({ table, method, where, limit, offset });
+	const comments = await select({ table, method, where, limit, offset, order });
 	if (!(comments && comments.rows.length)) throw { status: types.C2_ARTICLE_NO_COMMENTS };
 	return { ...data, comments };
 }
@@ -101,12 +103,14 @@ export async function getChildComments (options, data) {
 	const { articleId, pageId, comments } = data;
 	const parentIds = comments.rows.map( row => row.id );
 	// 查询数据库选项
+	const offset = 0;
+	const order = 'create_time';
 	const method = 'findAndCount';
 	const { limit } = article.GET_CHILD_COMMETNS;
-	const offset = 0;
+	
 	// 获取所有的
 	for (const parentId of parentIds) {
-		const comment = await select({ table, method, where: { parentId, articleId }, limit, offset });
+		const comment = await select({ table, method, where: { parentId, articleId }, limit, offset, order });
 		if (comment && comment.rows && comment.rows.length) childComments.push(comment);
 	}
 	return { ...data, childComments };
@@ -210,7 +214,12 @@ export async function getAuthorsInfo (options, data) {
 	});
 	return { ...data, result: articles };
 };
-
+export async function createComment (options, data) {
+	const { table } = options;
+	const values = data;
+	const comment = await create({ table, data: values });
+	return { ...data, result: comment, comment };
+};
 // 一下为每个check文件都可复用的函数
 
 /**
@@ -218,7 +227,7 @@ export async function getAuthorsInfo (options, data) {
  * @param {string; }} options       [description]
  * @param {[type]}     data [description]
  */
-export const select = async (options: { table: any; method: string; where?: any; attributes?: any; limit?: number; offset?: number; order?: any[]; }) => {
+export const select = async (options: { table: any; method: string; where?: any; attributes?: any; limit?: number; offset?: number; order?: any }) => {
 	const { method } = options;
 	const Table = options.table;
 	
@@ -229,7 +238,19 @@ export const select = async (options: { table: any; method: string; where?: any;
 
 	return await Table[method](condition)
 		.then(data   => data? data: { error: true })
-		.catch(error => { console.log(error); return { error: true } });
+		.catch(error => { console.log(error); return { error: true }; });
 };
+/**
+ * [create description]
+ * @param {any} options [description]
+ */
+export const create = async (options: any) => {
+	const { table: Table, data } = options;
+	// 初始化
+	delete options.table;
 
+	return await Table.create(data)
+		.then(data => data)
+		.catch(error => { console.log(error); return { error: true }; });
+};
 export function s() {};
