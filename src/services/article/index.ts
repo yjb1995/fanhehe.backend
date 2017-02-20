@@ -52,8 +52,10 @@ export default {
 	},
 	async [ methods.CREATE_COMMENT.name ] (data) {
 		const check = new Check(data);
+		const { username, nickname, preview } = data;
+		const up = { username, nickname, preview };
 		const result = await Main.TArticleComments.create(data).then(result => result);
-		console.log(result, 'xxxxx');
+		result.dataValues.up = up;
 		return { status: 200, data: result };
 	},
 	async [ methods.DELETE_COMMENT.name ] (data) {
