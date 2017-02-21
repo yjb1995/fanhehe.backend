@@ -68,6 +68,8 @@ export default {
 	 			return { status, data };
 	 		}).catch(error => error);
 	 		// 写入session
+	 		const { id, nickname, username } = result.data;
+	 		ctx.session = { id, nickname, username };
 	 	}
 
 	 	return { ...checkResult, ...result };
